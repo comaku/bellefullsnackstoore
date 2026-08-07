@@ -738,15 +738,36 @@ LOADING MODAL
 
 
 <script>
-
 // ==========================================
 // BELLEFULL SNACK STORE
 // checkout.js
 // ==========================================
 
-// ---------------------------
+// ==========================================
+// CONFIGURATION
+// ==========================================
+
+// -----------------------------
+// CLOUDINARY
+// -----------------------------
+
+const CLOUDINARY_CLOUD_NAME = "qzvhx6nc";
+const CLOUDINARY_UPLOAD_PRESET = "Bellefull-Snack-Receipts";
+
+// -----------------------------
+// GOOGLE APPS SCRIPT
+// -----------------------------
+// IMPORTANT:
+// Replace this with your deployed
+// Google Apps Script Web App URL.
+
+const GOOGLE_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbxqp2HVu9qShtnJNeG1BZ34PTuTnrtZGiN23bHdI3C3dcPz1xRXnhCB8uRFqn_auzGY/exec";
+
+
+// ==========================================
 // ELEMENTS
-// ---------------------------
+// ==========================================
 
 const orderItems = document.getElementById("order-items");
 const totalItems = document.getElementById("total-items");
@@ -762,17 +783,19 @@ const successModal = document.getElementById("success-modal");
 
 const submitBtn = document.getElementById("submit-order");
 
-// ---------------------------
+
+// ==========================================
 // LOAD CART
-// ---------------------------
+// ==========================================
 
 let cart = JSON.parse(localStorage.getItem("cart")) || [];
 
 displayCart();
 
-// ---------------------------
-// DISPLAY ORDER SUMMARY
-// ---------------------------
+
+// ==========================================
+// DISPLAY CART
+// ==========================================
 
 function displayCart() {
 
@@ -784,9 +807,13 @@ function displayCart() {
     if (cart.length === 0) {
 
         orderItems.innerHTML = `
-        <p style="text-align:center;color:#888;padding:20px;">
-            Your cart is empty.
-        </p>
+            <p style="
+                text-align:center;
+                color:#888;
+                padding:20px;
+            ">
+                Your cart is empty.
+            </p>
         `;
 
         totalItems.innerText = "0";
@@ -803,230 +830,613 @@ function displayCart() {
         itemCount += item.qty;
 
         orderItems.innerHTML += `
-        <div class="order-item">
+            <div class="order-item">
 
-            <div>
-                <strong>${item.name}</strong><br>
-                Qty: ${item.qty}
+                <div>
+                    <strong>${escapeHTML(item.name)}</strong>
+                    <br>
+                    Qty: ${item.qty}
+                </div>
+
+                <div>
+                    ₦${subtotal.toLocaleString()}
+                </div>
+
             </div>
-
-            <div>
-                ₦${subtotal.toLocaleString()}
-            </div>
-
-        </div>
         `;
 
     });
 
     totalItems.innerText = itemCount;
-    grandTotal.innerText = "₦" + total.toLocaleString();
 
+    grandTotal.innerText =
+        "₦" + total.toLocaleString();
 }
-
-// ---------------------------
-// COPY ACCOUNT NUMBER
-// ---------------------------
-
-copyBtn.addEventListener("click", () => {
-
-    navigator.clipboard.writeText(accountNumber.innerText);
-
-    copyBtn.innerHTML =
-    '<i class="fa-solid fa-check"></i> Copied';
-
-    setTimeout(() => {
-
-        copyBtn.innerHTML =
-        '<i class="fa-solid fa-copy"></i> Copy Account Number';
-
-    },2000);
-
-});
 
 
 // ==========================================
-// UPLOAD RECEIPT TO CLOUDINARY
+// COPY ACCOUNT NUMBER
+// ==========================================
+
+if (copyBtn) {
+
+    copyBtn.addEventListener("click", async () => {
+
+        try {
+
+            await navigator.clipboard.writeText(
+                accountNumber.innerText.trim()
+            );
+
+            copyBtn.innerHTML = `
+                <i class="fa-solid fa-check"></i>
+                Copied!
+            `;
+
+            setTimeout(() => {
+
+                copyBtn.innerHTML = `
+                    <i class="fa-solid fa-copy"></i>
+                    Copy Account Number
+                `;
+
+            }, 2000);
+
+        } catch (error) {
+
+            console.error(
+                "Could not copy account number:",
+                error
+            );
+
+            alert(
+                "Unable to copy automatically. Please copy the account number manually."
+            );
+
+        }
+
+    });
+
+}
+
+
+// ==========================================
+// CLOUDINARY RECEIPT UPLOAD
 // ==========================================
 
 async function uploadReceipt(file) {
 
-    const CLOUD_NAME = "YOUR_CLOUD_NAME";
-    const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
+    if (!file) {
+
+        throw new Error(
+            "No payment receipt was selected."
+        );
+
+    }
+
+    if (
+        !CLOUDINARY_CLOUD_NAME ||
+        CLOUDINARY_CLOUD_NAME === "YOUR_CLOUD_NAME"
+    ) {
+
+        throw new Error(
+            "Cloudinary Cloud Name has not been configured."
+        );
+
+    }
+
+    if (
+        !CLOUDINARY_UPLOAD_PRESET ||
+        CLOUDINARY_UPLOAD_PRESET === "YOUR_UPLOAD_PRESET"
+    ) {
+
+        throw new Error(
+            "Cloudinary Upload Preset has not been configured."
+        );
+
+    }
+
+
+    // -----------------------------
+    // CHECK FILE SIZE
+    // -----------------------------
+
+    const maxSize =
+        10 * 1024 * 1024; // 10MB
+
+    if (file.size > maxSize) {
+
+        throw new Error(
+            "Receipt file is too large. Maximum size is 10MB."
+        );
+
+    }
+
+
+    // -----------------------------
+    // CHECK FILE TYPE
+    // -----------------------------
+
+    const allowedTypes = [
+
+        "image/jpeg",
+        "image/png",
+        "image/jpg",
+        "application/pdf"
+
+    ];
+
+    if (!allowedTypes.includes(file.type)) {
+
+        throw new Error(
+            "Invalid receipt format. Please upload JPG, PNG, JPEG or PDF."
+        );
+
+    }
+
+
+    // -----------------------------
+    // FORM DATA
+    // -----------------------------
 
     const formData = new FormData();
 
     formData.append("file", file);
-    formData.append("upload_preset", UPLOAD_PRESET);
+
+    formData.append(
+        "upload_preset",
+        CLOUDINARY_UPLOAD_PRESET
+    );
+
+
+    // -----------------------------
+    // CLOUDINARY UPLOAD
+    // -----------------------------
 
     const endpoint =
-        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
+        `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
 
-    const response = await fetch(endpoint, {
-        method: "POST",
-        body: formData
-    });
+    const response = await fetch(
+        endpoint,
+        {
+            method: "POST",
+            body: formData
+        }
+    );
+
 
     if (!response.ok) {
-        throw new Error("Receipt upload failed.");
+
+        const errorText =
+            await response.text();
+
+        console.error(
+            "Cloudinary error:",
+            errorText
+        );
+
+        throw new Error(
+            "Payment receipt upload failed."
+        );
+
     }
 
-    const data = await response.json();
+
+    const data =
+        await response.json();
+
+
+    if (!data.secure_url) {
+
+        throw new Error(
+            "Cloudinary did not return a receipt URL."
+        );
+
+    }
+
 
     return data.secure_url;
-} 
-
-try {
-
-    // Upload receipt to Cloudinary
-    const receiptURL = await uploadReceipt(receipt);
-
-    console.log("Receipt URL:", receiptURL);
-
-    loadingModal.style.display = "none";
-
-    successModal.style.display = "flex";
-
-    localStorage.removeItem("cart");
-
-    form.reset();
-
-    setTimeout(() => {
-
-        window.location.href = "index.html";
-
-    }, 3000);
-
-}
-catch (error) {
-
-    loadingModal.style.display = "none";
-
-    alert("Receipt upload failed.");
-
-    console.error(error);
 
 }
 
-   
-// ---------------------------
-// FORM SUBMIT
-// ---------------------------
 
-form.addEventListener("submit", async function(e){
+// ==========================================
+// SEND ORDER TO GOOGLE APPS SCRIPT
+// ==========================================
 
-    e.preventDefault();
+async function sendOrderToGoogleSheets(order) {
 
-    if(cart.length===0){
+    if (
+        !GOOGLE_SCRIPT_URL ||
+        GOOGLE_SCRIPT_URL ===
+        "YOUR_GOOGLE_APPS_SCRIPT_WEB_APP_URL"
+    ) {
 
-        alert("Your cart is empty.");
-
-        return;
-
-    }
-
-    // -------------------------
-    // GET FORM VALUES
-    // -------------------------
-
-    const fullname = document.getElementById("fullname").value.trim();
-
-    const email = document.getElementById("email").value.trim();
-
-    const phone = document.getElementById("phone").value.trim();
-
-    const location = document.getElementById("location").value.trim();
-
-    const hostel = document.getElementById("hostel").value.trim();
-
-    const room = document.getElementById("room").value.trim();
-
-    const receipt = document.getElementById("receipt").files[0];
-
-    // -------------------------
-    // VALIDATION
-    // -------------------------
-
-    if(
-        !fullname ||
-        !email ||
-        !phone ||
-        !location ||
-        !hostel ||
-        !room ||
-        !receipt
-    ){
-
-        alert("Please complete all fields.");
-
-        return;
+        throw new Error(
+            "Google Apps Script URL has not been configured."
+        );
 
     }
 
-    // -------------------------
-    // SHOW LOADING
-    // -------------------------
 
-    loadingModal.style.display = "flex";
+    const response = await fetch(
+        GOOGLE_SCRIPT_URL,
+        {
 
-    submitBtn.disabled = true;
+            method: "POST",
 
-    submitBtn.innerHTML =
-    '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+            headers: {
+                "Content-Type":
+                    "text/plain;charset=utf-8"
+            },
 
-    try{
+            body: JSON.stringify(order)
 
-        // =====================================
-        // PART 2
-        // Replace this section later with:
-        // Cloudinary Upload
-        // Google Sheets
-        // EmailJS
-        // =====================================
+        }
+    );
 
-        await new Promise(resolve=>setTimeout(resolve,2500));
 
-        // -------------------------
-        // SUCCESS
-        // -------------------------
+    /*
+        We don't depend on the response body here.
 
-        loadingModal.style.display="none";
+        Google Apps Script Web Apps can behave differently
+        depending on deployment/browser CORS handling.
 
-        successModal.style.display="flex";
+        If the request reaches Apps Script successfully,
+        doPost(e) will process the order.
+    */
 
-        localStorage.removeItem("cart");
 
-        form.reset();
+    return true;
 
-        setTimeout(()=>{
+}
 
-            window.location.href="index.html";
 
-        },3000);
+// ==========================================
+// FORM SUBMISSION
+// ==========================================
+
+form.addEventListener(
+    "submit",
+    async function (e) {
+
+        e.preventDefault();
+
+
+        // ======================================
+        // CHECK CART
+        // ======================================
+
+        if (cart.length === 0) {
+
+            alert(
+                "Your cart is empty."
+            );
+
+            return;
+
+        }
+
+
+        // ======================================
+        // GET FORM VALUES
+        // ======================================
+
+        const fullname =
+            document
+                .getElementById("fullname")
+                .value
+                .trim();
+
+        const email =
+            document
+                .getElementById("email")
+                .value
+                .trim();
+
+        const phone =
+            document
+                .getElementById("phone")
+                .value
+                .trim();
+
+        const location =
+            document
+                .getElementById("location")
+                .value
+                .trim();
+
+        const hostel =
+            document
+                .getElementById("hostel")
+                .value
+                .trim();
+
+        const room =
+            document
+                .getElementById("room")
+                .value
+                .trim();
+
+        const receiptInput =
+            document.getElementById("receipt");
+
+        const receipt =
+            receiptInput.files[0];
+
+
+        // ======================================
+        // VALIDATION
+        // ======================================
+
+        if (
+            !fullname ||
+            !email ||
+            !phone ||
+            !location ||
+            !hostel ||
+            !room ||
+            !receipt
+        ) {
+
+            alert(
+                "Please complete all fields and upload your payment receipt."
+            );
+
+            return;
+
+        }
+
+
+        // ======================================
+        // CALCULATE TOTAL
+        // ======================================
+
+        let totalAmount = 0;
+
+        let totalQuantity = 0;
+
+        cart.forEach(item => {
+
+            totalAmount +=
+                Number(item.price) *
+                Number(item.qty);
+
+            totalQuantity +=
+                Number(item.qty);
+
+        });
+
+
+        // ======================================
+        // SHOW LOADING
+        // ======================================
+
+        loadingModal.style.display =
+            "flex";
+
+        submitBtn.disabled = true;
+
+        submitBtn.innerHTML = `
+            <i class="fa-solid fa-spinner fa-spin"></i>
+            Processing Order...
+        `;
+
+
+        try {
+
+            // ==================================
+            // STEP 1
+            // UPLOAD RECEIPT TO CLOUDINARY
+            // ==================================
+
+            loadingModal
+                .querySelector("h3")
+                .innerText =
+                "Uploading payment receipt...";
+
+
+            const receiptURL =
+                await uploadReceipt(receipt);
+
+
+            console.log(
+                "Receipt uploaded:",
+                receiptURL
+            );
+
+
+            // ==================================
+            // STEP 2
+            // CREATE ORDER DATA
+            // ==================================
+
+            const order = {
+
+                orderId:
+                    "BF-" +
+                    Date.now(),
+
+                date:
+                    new Date().toLocaleString(
+                        "en-NG",
+                        {
+                            timeZone:
+                                "Africa/Lagos"
+                        }
+                    ),
+
+                fullname:
+                    fullname,
+
+                email:
+                    email,
+
+                phone:
+                    phone,
+
+                location:
+                    location,
+
+                hostel:
+                    hostel,
+
+                room:
+                    room,
+
+                totalItems:
+                    totalQuantity,
+
+                total:
+                    totalAmount,
+
+                receipt:
+                    receiptURL,
+
+                products:
+                    cart.map(item => ({
+
+                        name:
+                            item.name,
+
+                        price:
+                            Number(item.price),
+
+                        quantity:
+                            Number(item.qty),
+
+                        subtotal:
+                            Number(item.price) *
+                            Number(item.qty)
+
+                    }))
+
+            };
+
+
+            console.log(
+                "Order prepared:",
+                order
+            );
+
+
+            // ==================================
+            // STEP 3
+            // SEND TO GOOGLE SHEETS
+            // ==================================
+
+            loadingModal
+                .querySelector("h3")
+                .innerText =
+                "Saving your order...";
+
+
+            await sendOrderToGoogleSheets(
+                order
+            );
+
+
+            console.log(
+                "Order sent to Google Apps Script."
+            );
+
+
+            // ==================================
+            // STEP 4
+            // SUCCESS
+            // ==================================
+
+            loadingModal.style.display =
+                "none";
+
+            successModal.style.display =
+                "flex";
+
+
+            // ==================================
+            // CLEAR CART
+            // ==================================
+
+            localStorage.removeItem(
+                "cart"
+            );
+
+
+            // ==================================
+            // RESET FORM
+            // ==================================
+
+            form.reset();
+
+
+            // ==================================
+            // REDIRECT
+            // ==================================
+
+            setTimeout(() => {
+
+                window.location.href =
+                    "index.html";
+
+            }, 3000);
+
+        }
+
+
+        catch (error) {
+
+            console.error(
+                "ORDER ERROR:",
+                error
+            );
+
+
+            // Hide loading
+
+            loadingModal.style.display =
+                "none";
+
+
+            // Show error
+
+            alert(
+                error.message ||
+                "Something went wrong while submitting your order. Please try again."
+            );
+
+        }
+
+
+        finally {
+
+            submitBtn.disabled =
+                false;
+
+            submitBtn.innerHTML = `
+                <i class="fa-solid fa-paper-plane"></i>
+                Send Order
+            `;
+
+        }
 
     }
+);
 
-    catch(error){
 
-        loadingModal.style.display="none";
+// ==========================================
+// HTML ESCAPE FUNCTION
+// ==========================================
 
-        alert("Something went wrong.");
+function escapeHTML(value) {
 
-        console.error(error);
+    return String(value)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
 
-    }
-
-    finally{
-
-        submitBtn.disabled=false;
-
-        submitBtn.innerHTML=
-        '<i class="fa-solid fa-paper-plane"></i> Send Order';
-
-    }
-
-});
-
+}
 </script>
 
 </body>
