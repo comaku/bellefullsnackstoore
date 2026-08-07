@@ -844,6 +844,71 @@ copyBtn.addEventListener("click", () => {
 
 });
 
+
+// ==========================================
+// UPLOAD RECEIPT TO CLOUDINARY
+// ==========================================
+
+async function uploadReceipt(file) {
+
+    const CLOUD_NAME = "YOUR_CLOUD_NAME";
+    const UPLOAD_PRESET = "YOUR_UPLOAD_PRESET";
+
+    const formData = new FormData();
+
+    formData.append("file", file);
+    formData.append("upload_preset", UPLOAD_PRESET);
+
+    const endpoint =
+        `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/auto/upload`;
+
+    const response = await fetch(endpoint, {
+        method: "POST",
+        body: formData
+    });
+
+    if (!response.ok) {
+        throw new Error("Receipt upload failed.");
+    }
+
+    const data = await response.json();
+
+    return data.secure_url;
+} 
+
+try {
+
+    // Upload receipt to Cloudinary
+    const receiptURL = await uploadReceipt(receipt);
+
+    console.log("Receipt URL:", receiptURL);
+
+    loadingModal.style.display = "none";
+
+    successModal.style.display = "flex";
+
+    localStorage.removeItem("cart");
+
+    form.reset();
+
+    setTimeout(() => {
+
+        window.location.href = "index.html";
+
+    }, 3000);
+
+}
+catch (error) {
+
+    loadingModal.style.display = "none";
+
+    alert("Receipt upload failed.");
+
+    console.error(error);
+
+}
+
+   
 // ---------------------------
 // FORM SUBMIT
 // ---------------------------
