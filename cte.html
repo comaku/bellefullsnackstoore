@@ -1,0 +1,967 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checkout | Bellefull Snack Store</title>
+
+<link rel="stylesheet" href="checkout.css">
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/* ==========================
+   GOOGLE FONT
+========================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    background:#f5f7fb;
+    color:#333;
+}
+
+/* ==========================
+   HEADER
+========================== */
+
+header{
+    background:#fff;
+    padding:18px 8%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+    color:#ff9800;
+}
+
+.back-btn{
+    text-decoration:none;
+    color:#fff;
+    background:#ff9800;
+    padding:12px 22px;
+    border-radius:40px;
+    transition:.3s;
+}
+
+.back-btn:hover{
+    background:#e68900;
+    transform:translateY(-3px);
+}
+
+/* ==========================
+   MAIN LAYOUT
+========================== */
+
+.checkout-container{
+    width:90%;
+    max-width:1400px;
+    margin:40px auto;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:30px;
+}
+
+/* ==========================
+   CARD
+========================== */
+
+.card{
+    background:#fff;
+    border-radius:20px;
+    padding:25px;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    margin-bottom:25px;
+    animation:fadeUp .6s ease;
+}
+
+.card h2{
+    margin-bottom:20px;
+    color:#ff9800;
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+/* ==========================
+ORDER SUMMARY
+========================== */
+
+#order-items{
+    margin-bottom:20px;
+}
+
+.order-item{
+    display:flex;
+    justify-content:space-between;
+    padding:12px 0;
+    border-bottom:1px solid #eee;
+}
+
+.summary{
+    margin-top:20px;
+}
+
+.summary div{
+    display:flex;
+    justify-content:space-between;
+    margin:12px 0;
+    font-size:18px;
+}
+
+.summary strong{
+    color:#ff9800;
+}
+
+/* ==========================
+PAYMENT
+========================== */
+
+.payment-box{
+    background:#fff8ef;
+    border:2px dashed #ff9800;
+    border-radius:15px;
+    padding:20px;
+}
+
+.payment-row{
+    display:flex;
+    justify-content:space-between;
+    margin:15px 0;
+}
+
+#copy-account{
+    width:100%;
+    margin-top:20px;
+    border:none;
+    background:#ff9800;
+    color:#fff;
+    padding:14px;
+    border-radius:40px;
+    cursor:pointer;
+    transition:.3s;
+    font-size:16px;
+}
+
+#copy-account:hover{
+    background:#e68900;
+}
+
+.note{
+    margin-top:15px;
+    color:#777;
+    line-height:1.6;
+}
+
+/* ==========================
+FORM
+========================== */
+
+.input-group{
+    margin-bottom:20px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+}
+
+.input-group input{
+    width:100%;
+    padding:15px;
+    border:2px solid #ddd;
+    border-radius:12px;
+    outline:none;
+    transition:.3s;
+}
+
+.input-group input:focus{
+    border-color:#ff9800;
+    box-shadow:0 0 10px rgba(255,152,0,.2);
+}
+
+.two-column{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:20px;
+}
+
+small{
+    color:#777;
+}
+
+/* ==========================
+FILE INPUT
+========================== */
+
+input[type=file]{
+    background:#fafafa;
+    cursor:pointer;
+}
+
+/* ==========================
+BUTTON
+========================== */
+
+#submit-order{
+    width:100%;
+    padding:16px;
+    border:none;
+    background:#ff9800;
+    color:#fff;
+    font-size:18px;
+    border-radius:50px;
+    cursor:pointer;
+    transition:.3s;
+}
+
+#submit-order:hover{
+    background:#e68900;
+    transform:translateY(-4px);
+    box-shadow:0 10px 20px rgba(255,152,0,.3);
+}
+
+/* ==========================
+SUCCESS MODAL
+========================== */
+
+#success-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.6);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.success-box{
+    background:#fff;
+    padding:40px;
+    border-radius:20px;
+    text-align:center;
+    width:90%;
+    max-width:420px;
+    animation:pop .4s ease;
+}
+
+.success-icon{
+    font-size:80px;
+    color:#28a745;
+    margin-bottom:20px;
+    animation:bounce 1s infinite;
+}
+
+/* ==========================
+LOADING
+========================== */
+
+#loading-modal{
+    position:fixed;
+    inset:0;
+    background:rgba(255,255,255,.9);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:9999;
+}
+
+.loading-box{
+    text-align:center;
+}
+
+.loader{
+    width:70px;
+    height:70px;
+    border:6px solid #ffe4b5;
+    border-top:6px solid #ff9800;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto auto 20px;
+}
+
+/* ==========================
+ANIMATIONS
+========================== */
+
+@keyframes spin{
+    100%{
+        transform:rotate(360deg);
+    }
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+@keyframes pop{
+    from{
+        transform:scale(.7);
+        opacity:0;
+    }
+    to{
+        transform:scale(1);
+        opacity:1;
+    }
+}
+
+@keyframes bounce{
+    0%,100%{
+        transform:translateY(0);
+    }
+    50%{
+        transform:translateY(-10px);
+    }
+}
+
+/* ==========================
+RESPONSIVE
+========================== */
+
+@media(max-width:900px){
+
+.checkout-container{
+    grid-template-columns:1fr;
+}
+
+.two-column{
+    grid-template-columns:1fr;
+}
+
+header{
+    flex-direction:column;
+    gap:15px;
+    text-align:center;
+}
+
+.logo{
+    font-size:24px;
+}
+
+}
+
+@media(max-width:600px){
+
+.checkout-container{
+    width:95%;
+}
+
+.card{
+    padding:20px;
+}
+
+.logo{
+    font-size:22px;
+}
+
+.back-btn{
+    width:100%;
+    text-align:center;
+}
+
+.summary div{
+    font-size:16px;
+}
+
+.success-box{
+    padding:30px 20px;
+}
+
+.success-icon{
+    font-size:60px;
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<!-- ===========================
+HEADER
+=========================== -->
+
+<header>
+
+    <div class="logo">
+        🍪 Bellefull Snack Store
+    </div>
+
+    <a href="index.html" class="back-btn">
+        <i class="fa-solid fa-arrow-left"></i>
+        Continue Shopping
+    </a>
+
+</header>
+
+<!-- ===========================
+CHECKOUT CONTAINER
+=========================== -->
+
+<section class="checkout-container">
+
+    <!-- LEFT SIDE -->
+
+    <div class="checkout-left">
+
+        <!-- Order Summary -->
+
+        <div class="card">
+
+            <h2>
+                <i class="fa-solid fa-cart-shopping"></i>
+                Order Summary
+            </h2>
+
+            <div id="order-items">
+
+                <!-- Products loaded by JavaScript -->
+
+            </div>
+
+            <div class="summary">
+
+                <div>
+                    <span>Total Items</span>
+                    <strong id="total-items">0</strong>
+                </div>
+
+                <div>
+                    <span>Total Amount</span>
+                    <strong id="grand-total">
+                        ₦0
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- Payment Details -->
+
+        <div class="card">
+
+            <h2>
+                <i class="fa-solid fa-building-columns"></i>
+                Bank Transfer
+            </h2>
+
+            <div class="payment-box">
+
+                <div class="payment-row">
+
+                    <span>Bank</span>
+
+                    <strong>OPAY</strong>
+
+                </div>
+
+                <div class="payment-row">
+
+                    <span>Account Name</span>
+
+                    <strong>David Faith</strong>
+
+                </div>
+
+                <div class="payment-row">
+
+                    <span>Account Number</span>
+
+                    <strong id="account-number">
+                        9083309825
+                    </strong>
+
+                </div>
+
+                <button id="copy-account">
+
+                    <i class="fa-solid fa-copy"></i>
+
+                    Copy Account Number
+
+                </button>
+
+            </div>
+
+            <p class="note">
+
+                <i class="fa-solid fa-circle-info"></i>
+
+                After payment, upload your receipt below before submitting your order.
+
+            </p>
+
+        </div>
+
+    </div>
+
+    <!-- RIGHT SIDE -->
+
+    <div class="checkout-right">
+
+        <form id="checkout-form">
+
+            <div class="card">
+
+                <h2>
+
+                    <i class="fa-solid fa-user"></i>
+
+                    Customer Information
+
+                </h2>
+
+                <div class="input-group">
+
+                    <label>
+
+                        Full Name
+
+                    </label>
+
+                    <input
+                    type="text"
+                    id="fullname"
+                    required>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>
+
+                        Email Address
+
+                    </label>
+
+                    <input
+                    type="email"
+                    id="email"
+                    required>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>
+
+                        Phone Number
+
+                    </label>
+
+                    <input
+                    type="tel"
+                    id="phone"
+                    required>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>
+
+                        Location
+
+                    </label>
+
+                    <input
+                    type="text"
+                    id="location"
+                    placeholder="City / Area"
+                    required>
+
+                </div>
+
+                <div class="two-column">
+
+                    <div class="input-group">
+
+                        <label>
+
+                            Hostel
+
+                        </label>
+
+                        <input
+                        type="text"
+                        id="hostel"
+                        required>
+
+                    </div>
+
+                    <div class="input-group">
+
+                        <label>
+
+                            Room Number
+
+                        </label>
+
+                        <input
+                        type="text"
+                        id="room"
+                        required>
+
+                    </div>
+
+                </div>
+
+                <div class="input-group">
+
+                    <label>
+
+                        Upload Payment Receipt
+
+                    </label>
+
+                    <input
+                    type="file"
+                    id="receipt"
+                    accept="image/*,.pdf"
+                    required>
+
+                    <small>
+
+                        Supported:
+                        JPG,
+                        PNG,
+                        JPEG,
+                        PDF
+
+                    </small>
+
+                </div>
+
+                <button
+                type="submit"
+                id="submit-order">
+
+                    <i class="fa-solid fa-paper-plane"></i>
+
+                    Send Order
+
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+<!-- ===========================
+SUCCESS MODAL
+=========================== -->
+
+<div id="success-modal">
+
+    <div class="success-box">
+
+        <div class="success-icon">
+
+            <i class="fa-solid fa-circle-check"></i>
+
+        </div>
+
+        <h2>
+
+            Order Submitted Successfully
+
+        </h2>
+
+        <p>
+
+            Thank you for shopping with Bellefull Snack Store.
+
+        </p>
+
+        <small>
+
+            Redirecting to the mart page...
+
+        </small>
+
+    </div>
+
+</div>
+
+<!-- ===========================
+LOADING MODAL
+=========================== -->
+
+<div id="loading-modal">
+
+    <div class="loading-box">
+
+        <div class="loader"></div>
+
+        <h3>
+
+            Sending your order...
+
+        </h3>
+
+        <p>
+
+            Please wait.
+
+        </p>
+
+    </div>
+
+</div>
+
+
+<script>
+
+// ==========================================
+// BELLEFULL SNACK STORE
+// checkout.js
+// ==========================================
+
+// ---------------------------
+// ELEMENTS
+// ---------------------------
+
+const orderItems = document.getElementById("order-items");
+const totalItems = document.getElementById("total-items");
+const grandTotal = document.getElementById("grand-total");
+
+const accountNumber = document.getElementById("account-number");
+const copyBtn = document.getElementById("copy-account");
+
+const form = document.getElementById("checkout-form");
+
+const loadingModal = document.getElementById("loading-modal");
+const successModal = document.getElementById("success-modal");
+
+const submitBtn = document.getElementById("submit-order");
+
+// ---------------------------
+// LOAD CART
+// ---------------------------
+
+let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+displayCart();
+
+// ---------------------------
+// DISPLAY ORDER SUMMARY
+// ---------------------------
+
+function displayCart() {
+
+    orderItems.innerHTML = "";
+
+    let total = 0;
+    let itemCount = 0;
+
+    if (cart.length === 0) {
+
+        orderItems.innerHTML = `
+        <p style="text-align:center;color:#888;padding:20px;">
+            Your cart is empty.
+        </p>
+        `;
+
+        totalItems.innerText = "0";
+        grandTotal.innerText = "₦0";
+
+        return;
+    }
+
+    cart.forEach(item => {
+
+        const subtotal = item.price * item.qty;
+
+        total += subtotal;
+        itemCount += item.qty;
+
+        orderItems.innerHTML += `
+        <div class="order-item">
+
+            <div>
+                <strong>${item.name}</strong><br>
+                Qty: ${item.qty}
+            </div>
+
+            <div>
+                ₦${subtotal.toLocaleString()}
+            </div>
+
+        </div>
+        `;
+
+    });
+
+    totalItems.innerText = itemCount;
+    grandTotal.innerText = "₦" + total.toLocaleString();
+
+}
+
+// ---------------------------
+// COPY ACCOUNT NUMBER
+// ---------------------------
+
+copyBtn.addEventListener("click", () => {
+
+    navigator.clipboard.writeText(accountNumber.innerText);
+
+    copyBtn.innerHTML =
+    '<i class="fa-solid fa-check"></i> Copied';
+
+    setTimeout(() => {
+
+        copyBtn.innerHTML =
+        '<i class="fa-solid fa-copy"></i> Copy Account Number';
+
+    },2000);
+
+});
+
+// ---------------------------
+// FORM SUBMIT
+// ---------------------------
+
+form.addEventListener("submit", async function(e){
+
+    e.preventDefault();
+
+    if(cart.length===0){
+
+        alert("Your cart is empty.");
+
+        return;
+
+    }
+
+    // -------------------------
+    // GET FORM VALUES
+    // -------------------------
+
+    const fullname = document.getElementById("fullname").value.trim();
+
+    const email = document.getElementById("email").value.trim();
+
+    const phone = document.getElementById("phone").value.trim();
+
+    const location = document.getElementById("location").value.trim();
+
+    const hostel = document.getElementById("hostel").value.trim();
+
+    const room = document.getElementById("room").value.trim();
+
+    const receipt = document.getElementById("receipt").files[0];
+
+    // -------------------------
+    // VALIDATION
+    // -------------------------
+
+    if(
+        !fullname ||
+        !email ||
+        !phone ||
+        !location ||
+        !hostel ||
+        !room ||
+        !receipt
+    ){
+
+        alert("Please complete all fields.");
+
+        return;
+
+    }
+
+    // -------------------------
+    // SHOW LOADING
+    // -------------------------
+
+    loadingModal.style.display = "flex";
+
+    submitBtn.disabled = true;
+
+    submitBtn.innerHTML =
+    '<i class="fa-solid fa-spinner fa-spin"></i> Sending...';
+
+    try{
+
+        // =====================================
+        // PART 2
+        // Replace this section later with:
+        // Cloudinary Upload
+        // Google Sheets
+        // EmailJS
+        // =====================================
+
+        await new Promise(resolve=>setTimeout(resolve,2500));
+
+        // -------------------------
+        // SUCCESS
+        // -------------------------
+
+        loadingModal.style.display="none";
+
+        successModal.style.display="flex";
+
+        localStorage.removeItem("cart");
+
+        form.reset();
+
+        setTimeout(()=>{
+
+            window.location.href="index.html";
+
+        },3000);
+
+    }
+
+    catch(error){
+
+        loadingModal.style.display="none";
+
+        alert("Something went wrong.");
+
+        console.error(error);
+
+    }
+
+    finally{
+
+        submitBtn.disabled=false;
+
+        submitBtn.innerHTML=
+        '<i class="fa-solid fa-paper-plane"></i> Send Order';
+
+    }
+
+});
+
+</script>
+
+</body>
+</html>

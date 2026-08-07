@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Bellefull Snack Store</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+<style>
+/* ===========================
+   GOOGLE FONT
+=========================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    background:#f8f9fa;
+    color:#333;
+}
+
+/* ===========================
+   PRELOADER
+=========================== */
+
+#preloader{
+    position:fixed;
+    inset:0;
+    background:#fff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    z-index:99999;
+}
+
+.loader-container{
+    text-align:center;
+}
+
+.loader{
+    width:70px;
+    height:70px;
+    border:6px solid #ffe6b3;
+    border-top:6px solid #ff9800;
+    border-radius:50%;
+    animation:spin 1s linear infinite;
+    margin:auto;
+}
+
+.store-name{
+    margin-top:20px;
+    color:#ff9800;
+    font-size:35px;
+}
+
+.store-name span{
+    color:#333;
+}
+
+.loading-text{
+    margin-top:10px;
+    color:#777;
+}
+
+@keyframes spin{
+
+100%{
+transform:rotate(360deg);
+}
+
+}
+
+/* ===========================
+ NAVBAR
+=========================== */
+
+header{
+    position:sticky;
+    top:0;
+    z-index:999;
+    background:#fff;
+    box-shadow:0 5px 20px rgba(0,0,0,.08);
+}
+
+.navbar{
+    width:90%;
+    margin:auto;
+    height:80px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:700;
+    color:#ff9800;
+}
+
+.search{
+    width:40%;
+}
+
+.search input{
+    width:100%;
+    padding:12px 18px;
+    border-radius:40px;
+    border:2px solid #eee;
+    outline:none;
+    transition:.3s;
+}
+
+.search input:focus{
+    border-color:#ff9800;
+}
+
+.icons{
+    display:flex;
+    gap:15px;
+}
+
+.icons button{
+    width:45px;
+    height:45px;
+    border:none;
+    border-radius:50%;
+    background:#fff4e5;
+    cursor:pointer;
+    font-size:18px;
+    transition:.3s;
+    position:relative;
+}
+
+.icons button:hover{
+    background:#ff9800;
+    color:white;
+}
+
+#cart-count{
+    position:absolute;
+    top:-6px;
+    right:-6px;
+    background:red;
+    color:white;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    font-size:11px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+/* ===========================
+ HERO
+=========================== */
+
+.hero{
+    min-height:500px;
+    background:linear-gradient(rgba(0,0,0,.55),rgba(0,0,0,.55)),
+    url("images/banner.jpg") center/cover;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    color:white;
+    text-align:center;
+    padding:20px;
+}
+
+.hero h1{
+    font-size:55px;
+    margin-bottom:15px;
+}
+
+.hero p{
+    font-size:20px;
+    margin-bottom:30px;
+}
+
+.hero a{
+    padding:15px 40px;
+    background:#ff9800;
+    color:white;
+    text-decoration:none;
+    border-radius:50px;
+    transition:.3s;
+}
+
+.hero a:hover{
+    background:#e68900;
+}
+
+/* ===========================
+ CATEGORY
+=========================== */
+
+.categories{
+    display:flex;
+    justify-content:center;
+    gap:15px;
+    flex-wrap:wrap;
+    padding:40px 20px;
+}
+
+.categories button{
+    border:none;
+    padding:12px 30px;
+    border-radius:30px;
+    background:white;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    cursor:pointer;
+    transition:.3s;
+    font-weight:600;
+}
+
+.categories button:hover{
+    background:#ff9800;
+    color:white;
+}
+
+/* ===========================
+ PRODUCTS
+=========================== */
+
+main{
+    width:90%;
+    margin:auto;
+}
+
+main h2{
+    text-align:center;
+    font-size:40px;
+    margin-bottom:40px;
+}
+
+.products{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:30px;
+    margin-bottom:70px;
+}
+
+.card{
+    background:white;
+    border-radius:20px;
+    overflow:hidden;
+    box-shadow:0 10px 25px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+.card h3{
+    margin:15px;
+}
+
+.price{
+    margin:15px;
+    color:#ff9800;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.qty{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.qty button{
+    width:35px;
+    height:35px;
+    border:none;
+    border-radius:50%;
+    background:#ff9800;
+    color:white;
+    cursor:pointer;
+    font-size:18px;
+}
+
+.add-cart{
+    width:90%;
+    margin:0 auto 20px;
+    display:block;
+    border:none;
+    padding:14px;
+    border-radius:40px;
+    background:#ff9800;
+    color:white;
+    cursor:pointer;
+    font-weight:600;
+    transition:.3s;
+}
+
+.add-cart:hover{
+    background:#e68900;
+}
+
+/* ===========================
+ CART
+=========================== */
+
+/* Overlay */
+
+.cart-overlay{
+
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(0,0,0,.5);
+opacity:0;
+visibility:hidden;
+transition:.4s;
+z-index:9998;
+
+
+}
+
+/* Cart */
+
+.cart-sidebar{
+
+position:fixed;
+top:0;
+right:-100%;
+width:400px;
+max-width:100%;
+height:100vh;
+background:#fff;
+display:flex;
+flex-direction:column;
+transition:right .4s ease;
+box-shadow:-5px 0 20px rgba(0,0,0,.2);
+z-index:9999;
+
+}
+
+/* Open Cart */
+
+.cart-sidebar.active{
+
+right:0;
+
+}
+
+.cart-overlay.active{
+
+visibility:visible;
+
+opacity:1;
+
+}
+
+/* Header */
+
+.cart-header{
+
+display:flex;
+
+justify-content:space-between;
+
+align-items:center;
+
+padding:20px;
+
+border-bottom:1px solid #eee;
+
+}
+
+.cart-header h2{
+
+font-size:22px;
+
+}
+
+#close-cart{
+
+border:none;
+
+background:none;
+
+font-size:26px;
+
+cursor:pointer;
+
+}
+
+/* Items */
+
+#cart-items{
+
+flex:1;
+
+overflow-y:auto;
+
+padding:20px;
+
+}
+
+/* Footer */
+
+.cart-footer{
+
+padding:20px;
+
+border-top:1px solid #eee;
+
+}
+
+.cart-footer h3{
+
+margin-bottom:15px;
+
+}
+
+.cart-footer a{
+
+display:block;
+
+background:#ff9800;
+
+padding:15px;
+
+text-align:center;
+
+color:white;
+
+text-decoration:none;
+
+border-radius:50px;
+
+font-weight:bold;
+
+transition:.3s;
+
+}
+
+.cart-footer a:hover{
+
+background:#e68900;
+
+}
+/* ===========================
+ FLOAT BUTTONS
+=========================== */
+
+.whatsapp,
+.telegram{
+    position:fixed;
+    width:60px;
+    height:60px;
+    right:20px;
+    border-radius:50%;
+    color:white;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:28px;
+    text-decoration:none;
+    box-shadow:0 10px 20px rgba(0,0,0,.2);
+    transition:.3s;
+}
+
+.whatsapp{
+    background:#25D366;
+    bottom:100px;
+}
+
+.telegram{
+    background:#229ED9;
+    bottom:30px;
+}
+
+.whatsapp:hover,
+.telegram:hover{
+    transform:scale(1.1);
+}
+
+/* ===========================
+ FOOTER
+=========================== */
+
+footer{
+    margin-top:70px;
+    background:#222;
+    color:white;
+    text-align:center;
+    padding:30px;
+}
+
+/* ===========================
+   RESPONSIVE - TABLET
+=========================== */
+
+@media (max-width: 992px){
+
+.navbar{
+    width:95%;
+    flex-wrap:wrap;
+    gap:15px;
+    padding:15px 0;
+    height:auto;
+}
+
+.logo{
+    width:100%;
+    text-align:center;
+}
+
+.search{
+    width:100%;
+}
+
+.icons{
+    width:100%;
+    justify-content:center;
+}
+
+.hero{
+    min-height:420px;
+    padding:50px 20px;
+}
+
+.hero h1{
+    font-size:42px;
+}
+
+.hero p{
+    font-size:18px;
+}
+
+.products{
+    grid-template-columns:repeat(2,1fr);
+}
+
+
+
+}
+
+
+/* ===========================
+   RESPONSIVE - MOBILE
+=========================== */
+
+@media (max-width:768px){
+
+.navbar{
+    flex-direction:column;
+    gap:15px;
+}
+
+.logo{
+    font-size:24px;
+}
+
+.search{
+    width:100%;
+}
+
+.search input{
+    padding:14px;
+}
+
+.icons{
+    justify-content:center;
+}
+
+.hero{
+    min-height:350px;
+}
+
+.hero h1{
+    font-size:32px;
+    line-height:1.3;
+}
+
+.hero p{
+    font-size:16px;
+}
+
+.hero a{
+    padding:14px 28px;
+}
+
+main{
+    width:95%;
+}
+
+main h2{
+    font-size:30px;
+}
+
+.products{
+    grid-template-columns:1fr;
+    gap:20px;
+}
+
+.card{
+    max-width:400px;
+    margin:auto;
+}
+
+.card img{
+    height:220px;
+}
+
+.categories{
+    padding:20px 10px;
+}
+
+.categories button{
+    padding:10px 18px;
+    font-size:14px;
+}
+
+.cart-sidebar{
+    margin-top:30px;
+}
+
+.whatsapp,
+.telegram{
+    width:55px;
+    height:55px;
+    font-size:24px;
+}
+
+.whatsapp{
+    bottom:90px;
+}
+
+.telegram{
+    bottom:20px;
+}
+
+footer{
+    padding:25px 15px;
+}
+
+}
+
+
+/* ===========================
+   SMALL PHONES
+=========================== */
+
+@media (max-width:480px){
+
+.logo{
+    font-size:20px;
+}
+
+.hero{
+    min-height:300px;
+}
+
+.hero h1{
+    font-size:26px;
+}
+
+.hero p{
+    font-size:15px;
+}
+
+.hero a{
+    width:100%;
+    max-width:250px;
+    text-align:center;
+}
+
+.products{
+    grid-template-columns:1fr;
+}
+
+.card{
+    border-radius:15px;
+}
+
+.card img{
+    height:180px;
+}
+
+.price{
+    font-size:20px;
+}
+
+.qty button{
+    width:32px;
+    height:32px;
+}
+
+.add-cart{
+    padding:12px;
+}
+
+.whatsapp,
+.telegram{
+    width:50px;
+    height:50px;
+    font-size:22px;
+}
+
+.store-name{
+    font-size:26px;
+}
+
+.loading-text{
+    font-size:14px;
+}
+
+}
+@media(max-width:768px){
+
+.cart-sidebar{
+
+width:100%;
+
+right:-100%;
+
+}
+
+}
+
+.cart-product{
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:15px 0;
+border-bottom:1px solid #eee;
+
+}
+
+.remove-btn{
+
+background:red;
+color:white;
+border:none;
+padding:10px;
+border-radius:6px;
+cursor:pointer;
+
+}
+
+</style>
+</head>
+<body>
+<div id="preloader"><div class="loader-container"><div class="loader"></div><h1>Bellefull <span>Snack Store</span></h1><p>Loading delicious snacks...</p></div></div>
+<header>
+<nav class="navbar">
+<div class="logo">🍪 Bellefull Snack Store</div>
+<div class="search"><input type="search" placeholder="Search snacks..."></div>
+<div class="icons">
+<button><i class="fa fa-user"></i></button>
+<button id="cart-btn">
+
+<i class="fa-solid fa-cart-shopping"></i>
+
+<span id="cart-count">0</span>
+
+</button>
+</div>
+</nav>
+</header>
+<section class="hero">
+<h1>Fresh & Delicious Homemade Snacks</h1>
+<p>Order your favourite snacks at affordable prices.</p>
+<a href="#products">Shop Now</a>
+</section>
+<section class="categories">
+<button>All</button><button>Chin Chin</button><button>Cookies</button><button>Plantain Chips</button><button>Popcorn</button><button>Drinks</button>
+</section>
+<main id="products">
+<h2>Featured Products</h2>
+<div class="products">
+<div class="card">
+<img src="images/product1.jpg" alt="Chin Chin">
+<h3>Chin Chin</h3><p class="price">₦500</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+<div class="card">
+<img src="images/product2.jpg" alt="Cookies">
+<h3>Cookies</h3><p class="price">₦1000</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+<div class="card">
+<img src="images/product3.jpg" alt="Plantain Chips">
+<h3>Plantain Chips</h3><p class="price">₦1500</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+<div class="card">
+<img src="images/product4.jpg" alt="Peanuts">
+<h3>Peanuts</h3><p class="price">₦2000</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+<div class="card">
+<img src="images/product5.jpg" alt="Popcorn">
+<h3>Popcorn</h3><p class="price">₦2500</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+<div class="card">
+<img src="images/product6.jpg" alt="Zobo">
+<h3>Zobo</h3><p class="price">₦3000</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+<div class="card">
+<img src="images/product7.jpg" alt="Cake">
+<h3>Cake</h3><p class="price">₦3500</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+<div class="card">
+<img src="images/product8.jpg" alt="Doughnut">
+<h3>Doughnut</h3><p class="price">₦4000</p>
+<div class="qty"><button>-</button><span>1</span><button>+</button></div>
+<button class="add-cart">Add to Cart</button>
+</div>
+</div></main>
+<!-- Overlay -->
+<div class="cart-overlay"></div>
+
+<!-- Shopping Cart -->
+<aside class="cart-sidebar">
+
+    <div class="cart-header">
+
+        <h2>
+            <i class="fa-solid fa-cart-shopping"></i>
+            Shopping Cart
+        </h2>
+
+        <button id="close-cart">
+            <i class="fa-solid fa-xmark"></i>
+        </button>
+
+    </div>
+
+    <div id="cart-items">
+
+        No items yet.
+
+    </div>
+
+    <div class="cart-footer">
+
+        <h3>Total: ₦0</h3>
+
+        <a href="cte.html">
+            Checkout
+        </a>
+
+    </div>
+
+</aside>
+<a class="whatsapp"
+   href="https://wa.me/2349083309825"
+   target="_blank"
+   aria-label="Chat with us on WhatsApp">
+    <i class="fab fa-whatsapp"></i>
+</a>
+<a class="telegram"
+   href="https://t.me/bellefullsnackstore"
+   target="_blank"
+   aria-label="Contact us on Telegram">
+    <i class="fab fa-telegram"></i>
+</a>
+<footer><p>&copy; 2026 Bellefull Snack Store. All rights reserved.</p></footer>
+<script>
+// ============================
+// PRELOADER
+// ============================
+
+window.addEventListener("load", () => {
+    const preloader = document.getElementById("preloader");
+
+    setTimeout(() => {
+        preloader.style.opacity = "0";
+        preloader.style.visibility = "hidden";
+    }, 1200);
+});
+
+// ============================
+// SHOPPING CART
+// ============================
+
+let cart = [];
+
+const cartItems = document.getElementById("cart-items");
+const cartCount = document.getElementById("cart-count");
+const totalDisplay = document.querySelector(".cart-sidebar h3");
+
+const cards = document.querySelectorAll(".card");
+
+cards.forEach(card => {
+
+    const minusBtn = card.querySelector(".qty button:first-child");
+    const plusBtn = card.querySelector(".qty button:last-child");
+    const qtySpan = card.querySelector(".qty span");
+    const addBtn = card.querySelector(".add-cart");
+
+    let qty = 1;
+
+    plusBtn.addEventListener("click", () => {
+        qty++;
+        qtySpan.innerText = qty;
+    });
+
+    minusBtn.addEventListener("click", () => {
+
+        if (qty > 1) {
+            qty--;
+            qtySpan.innerText = qty;
+        }
+
+    });
+
+    addBtn.addEventListener("click", () => {
+
+        const name = card.querySelector("h3").innerText;
+
+        const price = parseInt(
+            card.querySelector(".price")
+                .innerText
+                .replace("₦", "")
+                .replace(",", "")
+        );
+
+        const existing = cart.find(item => item.name === name);
+
+        if (existing) {
+
+            existing.qty += qty;
+
+        } else {
+
+            cart.push({
+                name,
+                price,
+                qty
+            });
+
+        }
+
+        qty = 1;
+        qtySpan.innerText = qty;
+
+        updateCart();
+
+        showToast(name + " added to cart!");
+
+    });
+
+});
+
+// ============================
+// UPDATE CART
+// ============================
+
+function updateCart() {
+
+    cartItems.innerHTML = "";
+
+    let total = 0;
+
+    let count = 0;
+
+    if (cart.length === 0) {
+
+        cartItems.innerHTML = "No items yet.";
+
+        cartCount.innerText = 0;
+
+        totalDisplay.innerText = "Total: ₦0";
+
+        return;
+
+    }
+
+    cart.forEach((item,index)=>{
+
+        total += item.price * item.qty;
+
+        count += item.qty;
+
+        const div = document.createElement("div");
+
+        div.style.marginBottom = "15px";
+
+        div.className = "cart-product";
+
+div.innerHTML = `
+<div>
+
+<h4>${item.name}</h4>
+
+<p>Qty: ${item.qty}</p>
+
+<strong>₦${(item.price * item.qty).toLocaleString()}</strong>
+
+</div>
+
+<button class="remove-btn" onclick="removeItem(${index})">
+
+<i class="fa-solid fa-trash"></i>
+
+</button>
+`;
+
+        cartItems.appendChild(div);
+
+    });
+
+    cartCount.innerText = count;
+
+    totalDisplay.innerText = "Total: ₦" + total.toLocaleString();
+
+    localStorage.setItem("cart", JSON.stringify(cart));
+
+}
+
+// ============================
+// REMOVE ITEM
+// ============================
+
+function removeItem(index){
+
+    cart.splice(index,1);
+
+    updateCart();
+
+}
+
+// ============================
+// LOAD CART
+// ============================
+
+window.addEventListener("DOMContentLoaded",()=>{
+
+    const saved = localStorage.getItem("cart");
+
+    if(saved){
+
+        cart = JSON.parse(saved);
+
+        updateCart();
+
+    }
+
+});
+
+// ============================
+// SEARCH
+// ============================
+
+const searchInput = document.querySelector(".search input");
+
+searchInput.addEventListener("keyup",()=>{
+
+    const value = searchInput.value.toLowerCase();
+
+    cards.forEach(card=>{
+
+        const name = card.querySelector("h3")
+        .innerText
+        .toLowerCase();
+
+        if(name.includes(value)){
+
+            card.style.display="block";
+
+        }else{
+
+            card.style.display="none";
+
+        }
+
+    });
+
+});
+
+// ============================
+// CATEGORY FILTER
+// ============================
+
+const categoryBtns=document.querySelectorAll(".categories button");
+
+categoryBtns.forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+const category=btn.innerText.toLowerCase();
+
+cards.forEach(card=>{
+
+const name=card.querySelector("h3")
+.innerText
+.toLowerCase();
+
+if(category==="all"){
+
+card.style.display="block";
+
+}
+else if(name.includes(category)){
+
+card.style.display="block";
+
+}
+else{
+
+card.style.display="none";
+
+}
+
+});
+
+});
+
+});
+
+// ============================
+// TOAST MESSAGE
+// ============================
+
+function showToast(message){
+
+const toast=document.createElement("div");
+
+toast.innerText=message;
+
+toast.style.position="fixed";
+toast.style.bottom="30px";
+toast.style.left="50%";
+toast.style.transform="translateX(-50%)";
+toast.style.background="#28a745";
+toast.style.color="white";
+toast.style.padding="15px 25px";
+toast.style.borderRadius="50px";
+toast.style.zIndex="9999";
+toast.style.boxShadow="0 10px 20px rgba(0,0,0,.2)";
+
+document.body.appendChild(toast);
+
+setTimeout(()=>{
+
+toast.remove();
+
+},2500);
+
+}
+
+// ============================
+// OPEN / CLOSE CART
+// ============================
+
+const cartBtn = document.getElementById("cart-btn");
+const cartSidebar = document.querySelector(".cart-sidebar");
+const overlay = document.querySelector(".cart-overlay");
+const closeCart = document.getElementById("close-cart");
+
+cartBtn.addEventListener("click", () => {
+    cartSidebar.classList.add("active");
+    overlay.classList.add("active");
+});
+
+closeCart.addEventListener("click", () => {
+    cartSidebar.classList.remove("active");
+    overlay.classList.remove("active");
+});
+
+overlay.addEventListener("click", () => {
+    cartSidebar.classList.remove("active");
+    overlay.classList.remove("active");
+});
+
+
+</script>
+
+</body>
+</html>
