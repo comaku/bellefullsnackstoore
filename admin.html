@@ -884,817 +884,943 @@ body {
 
 <script>
 
-
 // ==========================================
 // BELLEFULL ADMIN
 // ADMIN.JS
 // ==========================================
 
+document.addEventListener("DOMContentLoaded", function () {
 
-// ==========================================
-// ADMIN LOGIN
-// ==========================================
+    // ==========================================
+    // GOOGLE APPS SCRIPT URL
+    // ==========================================
 
-// TEMPORARY LOGIN
-// We will replace this with a secure system later.
+    const GOOGLE_SCRIPT_URL =
+        "https://script.google.com/macros/s/AKfycbzubs7qfioxo8PBZrTM-YatdLfzEl-0tWMUNFrC8mmTNwuqAp2OJLfgazgDmVxTTZ7D/exec";
 
-const GOOGLE_SCRIPT_URL =
-    "https://script.google.com/macros/s/AKfycbzubs7qfioxo8PBZrTM-YatdLfzEl-0tWMUNFrC8mmTNwuqAp2OJLfgazgDmVxTTZ7D/exec";
-    
-const ADMIN_USERNAME = "admin";
-const ADMIN_PASSWORD = "Bellefull123";
-    
 
+    // ==========================================
+    // ADMIN LOGIN DETAILS
+    // ==========================================
 
-const loginPage = document.getElementById("login-page");
+    const ADMIN_USERNAME = "admin";
+    const ADMIN_PASSWORD = "Bellefull123";
 
-const dashboard = document.getElementById("dashboard");
 
-const loginForm = document.getElementById("login-form");
+    // ==========================================
+    // GET HTML ELEMENTS
+    // ==========================================
 
-const loginError = document.getElementById("login-error");
+    const loginPage =
+        document.getElementById("login-page");
 
-const logoutBtn = document.getElementById("logout-btn");
+    const dashboard =
+        document.getElementById("dashboard");
 
-const productForm =
-    document.getElementById("product-form");    
+    const loginForm =
+        document.getElementById("login-form");
 
+    const loginError =
+        document.getElementById("login-error");
 
-// ==========================================
-// CHECK LOGIN
-// ==========================================
+    const logoutBtn =
+        document.getElementById("logout-btn");
 
-if (sessionStorage.getItem("bellefullAdmin") === "true") {
+    const productForm =
+        document.getElementById("product-form");
 
-    showDashboard();
+    const imageInput =
+        document.getElementById("product-image");
 
-}
-
-
-// ==========================================
-// LOGIN
-// ==========================================
-
-loginForm.addEventListener("submit", function(e) {
-
-    e.preventDefault();
-
-    const username =
-        document.getElementById("username").value.trim();
-
-    const password =
-        document.getElementById("password").value;
-
-
-    if (
-        username === ADMIN_USERNAME &&
-        password === ADMIN_PASSWORD
-    ) {
-
-        sessionStorage.setItem(
-            "bellefullAdmin",
-            "true"
-        );
-
-        loginError.innerText = "";
-
-        showDashboard();
-
-    } else {
-
-        loginError.innerText =
-            "Incorrect username or password.";
-
-    }
-
-});
-
-
-// ==========================================
-// SHOW DASHBOARD
-// ==========================================
-
-function showDashboard() {
-
-    loginPage.classList.add("hidden");
-
-    dashboard.classList.remove("hidden");
-
-    loadProductsFromGoogle();
-
-}
-
-
-// ==========================================
-// LOGOUT
-// ==========================================
-
-logoutBtn.addEventListener("click", function() {
-
-    sessionStorage.removeItem(
-        "bellefullAdmin"
-    );
-
-    dashboard.classList.add("hidden");
-
-    loginPage.classList.remove("hidden");
-
-});
-
-
-// ==========================================
-// SHOW / HIDE PASSWORD
-// ==========================================
-
-const togglePassword =
-    document.getElementById("toggle-password");
-
-togglePassword.addEventListener("click", function() {
-
-    const password =
-        document.getElementById("password");
-
-    const icon =
-        togglePassword.querySelector("i");
-
-
-    if (password.type === "password") {
-
-        password.type = "text";
-
-        icon.classList.remove("fa-eye");
-
-        icon.classList.add("fa-eye-slash");
-
-    } else {
-
-        password.type = "password";
-
-        icon.classList.remove("fa-eye-slash");
-
-        icon.classList.add("fa-eye");
-
-    }
-
-});
-
-
-// ==========================================
-// PRODUCT STORAGE
-// ==========================================
-
-let products =
-    JSON.parse(
-        localStorage.getItem(
-            "bellefullProducts"
-        )
-    ) || [];
-
-
-// ==========================================
-// IMAGE PREVIEW
-// ==========================================
-
-const imageInput =
-    document.getElementById("product-image");
-
-const previewContainer =
-    document.getElementById(
-        "image-preview-container"
-    );
-
-
-imageInput.addEventListener("input", function() {
-
-    const url =
-        imageInput.value.trim();
-
-
-    if (!url) {
-
-        showPreviewPlaceholder();
-
-        return;
-
-    }
-
-
-    const image =
-        new Image();
-
-
-    image.onload = function() {
-
-        previewContainer.innerHTML = `
-            
-            <img
-                id="image-preview"
-                src="${url}"
-                alt="Product Preview"
-            >
-
-        `;
-
-    };
-
-
-    image.onerror = function() {
-
-        previewContainer.innerHTML = `
-
-            <div class="preview-placeholder">
-
-                <i class="fa-solid fa-triangle-exclamation"></i>
-
-                <span>
-                    Image could not be loaded
-                </span>
-
-            </div>
-
-        `;
-
-    };
-
-
-    image.src = url;
-
-});
-
-
-// ==========================================
-// IMAGE PLACEHOLDER
-// ==========================================
-
-function showPreviewPlaceholder() {
-
-    previewContainer.innerHTML = `
-
-        <div class="preview-placeholder">
-
-            <i class="fa-regular fa-image"></i>
-
-            <span>
-                Image preview will appear here
-            </span>
-
-        </div>
-
-    `;
-
-}
-
-
-
-// ==========================================
-// ADD PRODUCT TO GOOGLE SHEETS
-// ==========================================
-
-productForm.addEventListener("submit", async function(e) {
-
-    e.preventDefault();
-
-
-    const name =
-        document
-            .getElementById("product-name")
-            .value
-            .trim();
-
-
-    const image =
-        document
-            .getElementById("product-image")
-            .value
-            .trim();
-
-
-    const category =
-        document
-            .getElementById("product-category")
-            .value;
-
-
-    const price =
-        Number(
-            document
-                .getElementById("product-price")
-                .value
-        );
-
-
-    // ======================================
-    // VALIDATION
-    // ======================================
-
-    if (!name) {
-
-        alert("Please enter a product name.");
-
-        return;
-
-    }
-
-
-    if (!image) {
-
-        alert("Please enter an image URL.");
-
-        return;
-
-    }
-
-
-    if (!category) {
-
-        alert("Please select a category.");
-
-        return;
-
-    }
-
-
-    if (!price || price <= 0) {
-
-        alert("Please enter a valid price.");
-
-        return;
-
-    }
-
-
-    // ======================================
-    // BUTTON LOADING
-    // ======================================
-
-    const button =
-        productForm.querySelector(
-            ".add-product-btn"
-        );
-
-
-    const originalText =
-        button.innerHTML;
-
-
-    button.disabled = true;
-
-    button.innerHTML =
-        '<i class="fa-solid fa-spinner fa-spin"></i> Adding...';
-
-
-    try {
-
-        // ==================================
-        // SEND TO GOOGLE APPS SCRIPT
-        // ==================================
-
-        const response =
-            await fetch(
-                GOOGLE_SCRIPT_URL,
-                {
-
-                    method: "POST",
-
-                    body: JSON.stringify({
-
-                        action: "addProduct",
-
-                        name: name,
-
-                        image: image,
-
-                        category: category,
-
-                        price: price
-
-                    })
-
-                }
-            );
-
-
-        const result =
-            await response.json();
-
-
-        // ==================================
-        // CHECK RESPONSE
-        // ==================================
-
-        if (!result.success) {
-
-            throw new Error(
-                result.error ||
-                "Product could not be added."
-            );
-
-        }
-
-
-        // ==================================
-        // SUCCESS
-        // ==================================
-
-        showToast(
-            "Product added successfully!"
-        );
-
-
-        productForm.reset();
-
-
-        showPreviewPlaceholder();
-
-
-        // Reload products from Google Sheet
-
-        await loadProductsFromGoogle();
-
-
-    } catch (error) {
-
-        console.error(error);
-
-        alert(
-            "Could not add product.\n\n" +
-            error.message
-        );
-
-
-    } finally {
-
-        button.disabled = false;
-
-        button.innerHTML =
-            originalText;
-
-    }
-
-});
-
-
-
-
-    // ======================================
-    // PRODUCT OBJECT
-    // ======================================
-
-    const product = {
-
-        id: Date.now(),
-
-        name: name,
-
-        image: image,
-
-        category: category,
-
-        price: price
-
-    };
-
-
-    // ======================================
-    // ADD PRODUCT
-    // ======================================
-
-    products.push(product);
-
-
-    saveProducts();
-
-
-    // Reset form
-
-    productForm.reset();
-
-    showPreviewPlaceholder();
-
-
-    // Update screen
-
-    displayProducts();
-
-
-    showToast(
-        "Product added successfully!"
-    );
-
-});
-
-
-// ==========================================
-// SAVE PRODUCTS
-// ==========================================
-
-function saveProducts() {
-
-    localStorage.setItem(
-        "bellefullProducts",
-        JSON.stringify(products)
-    );
-
-}
-
-
-
-// ==========================================
-// LOAD PRODUCTS FROM GOOGLE SHEETS
-// ==========================================
-
-async function loadProductsFromGoogle() {
-
-    try {
-
-        const response =
-            await fetch(
-                GOOGLE_SCRIPT_URL +
-                "?action=getProducts"
-            );
-
-
-        const result =
-            await response.json();
-
-
-        if (!result.success) {
-
-            throw new Error(
-                result.error ||
-                "Could not load products."
-            );
-
-        }
-
-
-        products =
-            result.products || [];
-
-
-        displayProducts();
-
-
-    } catch (error) {
-
-        console.error(
-            "Product loading error:",
-            error
-        );
-
-
+    const previewContainer =
         document.getElementById(
-            "products-container"
-        ).innerHTML = `
+            "image-preview-container"
+        );
 
-            <div class="empty-products">
-
-                <i
-                    class="fa-solid fa-triangle-exclamation"
-                    style="font-size:40px;margin-bottom:15px;">
-                </i>
-
-                <p>
-                    Could not load products.
-                </p>
-
-                <small>
-                    Please check your Google Apps Script connection.
-                </small>
-
-            </div>
-
-        `;
-
-    }
-
-}
-
-
-
-
-// ==========================================
-// DISPLAY PRODUCTS
-// ==========================================
-
-function displayProducts() {
-
-    const container =
+    const productsContainer =
         document.getElementById(
             "products-container"
         );
 
-    const count =
+    const productCount =
         document.getElementById(
             "product-count"
         );
 
-
-    count.innerText =
-        products.length;
-
-
-    container.innerHTML = "";
-
-
-    // ======================================
-    // EMPTY
-    // ======================================
-
-    if (products.length === 0) {
-
-        container.innerHTML = `
-
-            <div class="empty-products">
-
-                <i
-                    class="fa-solid fa-box-open"
-                    style="font-size:40px;margin-bottom:15px;">
-                </i>
-
-                <p>
-                    No products have been added yet.
-                </p>
-
-            </div>
-
-        `;
-
-        return;
-
-    }
-
-
-    // ======================================
-    // PRODUCTS
-    // ======================================
-
-    products.forEach(function(product) {
-
-        const card =
-            document.createElement("div");
-
-        card.className =
-            "product-card";
-
-
-        card.innerHTML = `
-
-            <img
-                class="product-image"
-                src="${product.image}"
-                alt="${product.name}"
-                onerror="this.src='https://via.placeholder.com/400x300?text=Image+Error'"
-            >
-
-            <div class="product-info">
-
-                <span class="product-category">
-
-                    ${product.category}
-
-                </span>
-
-                <h3>
-                    ${product.name}
-                </h3>
-
-                <div class="product-price">
-
-                    ₦${Number(product.price)
-                        .toLocaleString()}
-
-                </div>
-
-                <button
-                    class="remove-btn"
-                    onclick="removeProduct(${product.id})">
-
-                    <i class="fa-solid fa-trash"></i>
-
-                    Remove Product
-
-                </button>
-
-            </div>
-
-        `;
-
-
-        container.appendChild(card);
-
-    });
-
-}
-
-
-// ==========================================
-// REMOVE PRODUCT FROM GOOGLE SHEETS
-// ==========================================
-
-async function removeProduct(id) {
-
-    const confirmed =
-        confirm(
-            "Are you sure you want to remove this product?"
+    const togglePassword =
+        document.getElementById(
+            "toggle-password"
         );
 
 
-    if (!confirmed) {
+    // ==========================================
+    // CHECK REQUIRED ELEMENTS
+    // ==========================================
 
+    if (!loginForm) {
+        console.error("login-form was not found.");
         return;
+    }
+
+    if (!loginPage) {
+        console.error("login-page was not found.");
+        return;
+    }
+
+    if (!dashboard) {
+        console.error("dashboard was not found.");
+        return;
+    }
+
+
+    // ==========================================
+    // LOGIN
+    // ==========================================
+
+    loginForm.addEventListener(
+        "submit",
+        function (e) {
+
+            e.preventDefault();
+
+            const username =
+                document
+                    .getElementById("username")
+                    .value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("password")
+                    .value;
+
+
+            if (
+                username === ADMIN_USERNAME &&
+                password === ADMIN_PASSWORD
+            ) {
+
+                sessionStorage.setItem(
+                    "bellefullAdmin",
+                    "true"
+                );
+
+                loginError.innerText = "";
+
+                showDashboard();
+
+            } else {
+
+                loginError.innerText =
+                    "Incorrect username or password.";
+
+            }
+
+        }
+    );
+
+
+    // ==========================================
+    // SHOW DASHBOARD
+    // ==========================================
+
+    function showDashboard() {
+
+        loginPage.classList.add("hidden");
+
+        dashboard.classList.remove("hidden");
+
+        loadProductsFromGoogle();
 
     }
 
 
-    try {
+    // ==========================================
+    // LOGOUT
+    // ==========================================
 
-        const response =
-            await fetch(
-                GOOGLE_SCRIPT_URL,
-                {
+    if (logoutBtn) {
 
-                    method: "POST",
+        logoutBtn.addEventListener(
+            "click",
+            function () {
 
-                    body: JSON.stringify({
+                sessionStorage.removeItem(
+                    "bellefullAdmin"
+                );
 
-                        action: "removeProduct",
+                dashboard.classList.add("hidden");
 
-                        id: id
+                loginPage.classList.remove("hidden");
 
-                    })
+                loginForm.reset();
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // SHOW / HIDE PASSWORD
+    // ==========================================
+
+    if (togglePassword) {
+
+        togglePassword.addEventListener(
+            "click",
+            function () {
+
+                const password =
+                    document.getElementById("password");
+
+                const icon =
+                    togglePassword.querySelector("i");
+
+
+                if (password.type === "password") {
+
+                    password.type = "text";
+
+                    icon.classList.remove(
+                        "fa-eye"
+                    );
+
+                    icon.classList.add(
+                        "fa-eye-slash"
+                    );
+
+                } else {
+
+                    password.type = "password";
+
+                    icon.classList.remove(
+                        "fa-eye-slash"
+                    );
+
+                    icon.classList.add(
+                        "fa-eye"
+                    );
 
                 }
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // CHECK EXISTING LOGIN
+    // ==========================================
+
+    if (
+        sessionStorage.getItem(
+            "bellefullAdmin"
+        ) === "true"
+    ) {
+
+        showDashboard();
+
+    }
+
+
+    // ==========================================
+    // IMAGE PREVIEW
+    // ==========================================
+
+    if (imageInput) {
+
+        imageInput.addEventListener(
+            "input",
+            function () {
+
+                const url =
+                    imageInput.value.trim();
+
+
+                if (!url) {
+
+                    showPreviewPlaceholder();
+
+                    return;
+
+                }
+
+
+                const image =
+                    new Image();
+
+
+                image.onload =
+                    function () {
+
+                        previewContainer.innerHTML = `
+                            <img
+                                id="image-preview"
+                                src="${escapeHtml(url)}"
+                                alt="Product Preview"
+                            >
+                        `;
+
+                    };
+
+
+                image.onerror =
+                    function () {
+
+                        previewContainer.innerHTML = `
+                            <div class="preview-placeholder">
+
+                                <i class="fa-solid fa-triangle-exclamation"></i>
+
+                                <span>
+                                    Image could not be loaded
+                                </span>
+
+                            </div>
+                        `;
+
+                    };
+
+
+                image.src = url;
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // IMAGE PLACEHOLDER
+    // ==========================================
+
+    function showPreviewPlaceholder() {
+
+        if (!previewContainer) {
+            return;
+        }
+
+        previewContainer.innerHTML = `
+            <div class="preview-placeholder">
+
+                <i class="fa-regular fa-image"></i>
+
+                <span>
+                    Image preview will appear here
+                </span>
+
+            </div>
+        `;
+
+    }
+
+
+    // ==========================================
+    // ADD PRODUCT
+    // ==========================================
+
+    if (productForm) {
+
+        productForm.addEventListener(
+            "submit",
+            async function (e) {
+
+                e.preventDefault();
+
+
+                const name =
+                    document
+                        .getElementById(
+                            "product-name"
+                        )
+                        .value
+                        .trim();
+
+
+                const image =
+                    document
+                        .getElementById(
+                            "product-image"
+                        )
+                        .value
+                        .trim();
+
+
+                const category =
+                    document
+                        .getElementById(
+                            "product-category"
+                        )
+                        .value;
+
+
+                const price =
+                    Number(
+                        document
+                            .getElementById(
+                                "product-price"
+                            )
+                            .value
+                    );
+
+
+                // ==================================
+                // VALIDATION
+                // ==================================
+
+                if (!name) {
+
+                    alert(
+                        "Please enter a product name."
+                    );
+
+                    return;
+
+                }
+
+
+                if (!image) {
+
+                    alert(
+                        "Please enter an image URL."
+                    );
+
+                    return;
+
+                }
+
+
+                if (!category) {
+
+                    alert(
+                        "Please select a category."
+                    );
+
+                    return;
+
+                }
+
+
+                if (!price || price <= 0) {
+
+                    alert(
+                        "Please enter a valid price."
+                    );
+
+                    return;
+
+                }
+
+
+                // ==================================
+                // BUTTON
+                // ==================================
+
+                const button =
+                    productForm.querySelector(
+                        ".add-product-btn"
+                    );
+
+
+                const originalText =
+                    button.innerHTML;
+
+
+                button.disabled = true;
+
+                button.innerHTML =
+                    `<i class="fa-solid fa-spinner fa-spin"></i> Adding...`;
+
+
+                // ==================================
+                // SEND PRODUCT TO GOOGLE SHEETS
+                // ==================================
+
+                try {
+
+                    const response =
+                        await fetch(
+                            GOOGLE_SCRIPT_URL,
+                            {
+                                method: "POST",
+
+                                body: JSON.stringify({
+
+                                    action: "addProduct",
+
+                                    name: name,
+
+                                    image: image,
+
+                                    category: category,
+
+                                    price: price
+
+                                })
+                            }
+                        );
+
+
+                    const result =
+                        await response.json();
+
+
+                    console.log(
+                        "Add product response:",
+                        result
+                    );
+
+
+                    if (!result.success) {
+
+                        throw new Error(
+                            result.error ||
+                            "Product could not be added."
+                        );
+
+                    }
+
+
+                    // ==================================
+                    // SUCCESS
+                    // ==================================
+
+                    showToast(
+                        "Product added successfully!"
+                    );
+
+
+                    productForm.reset();
+
+
+                    showPreviewPlaceholder();
+
+
+                    // Reload products
+
+                    await loadProductsFromGoogle();
+
+
+                } catch (error) {
+
+                    console.error(
+                        "Add product error:",
+                        error
+                    );
+
+
+                    alert(
+                        "Could not add product.\n\n" +
+                        error.message
+                    );
+
+
+                } finally {
+
+                    button.disabled = false;
+
+                    button.innerHTML =
+                        originalText;
+
+                }
+
+            }
+        );
+
+    }
+
+
+    // ==========================================
+    // LOAD PRODUCTS FROM GOOGLE SHEETS
+    // ==========================================
+
+    async function loadProductsFromGoogle() {
+
+        if (!productsContainer) {
+            return;
+        }
+
+
+        productsContainer.innerHTML = `
+            <div class="empty-products">
+                <i class="fa-solid fa-spinner fa-spin"></i>
+                <p>Loading products...</p>
+            </div>
+        `;
+
+
+        try {
+
+            const response =
+                await fetch(
+                    GOOGLE_SCRIPT_URL +
+                    "?action=getProducts"
+                );
+
+
+            if (!response.ok) {
+
+                throw new Error(
+                    "Google Apps Script returned an error."
+                );
+
+            }
+
+
+            const result =
+                await response.json();
+
+
+            console.log(
+                "Products response:",
+                result
             );
 
 
-        const result =
-            await response.json();
+            if (!result.success) {
+
+                throw new Error(
+                    result.error ||
+                    "Could not load products."
+                );
+
+            }
 
 
-        if (!result.success) {
+            const products =
+                result.products || [];
 
-            throw new Error(
-                result.error ||
-                "Could not remove product."
+
+            displayProducts(products);
+
+
+        } catch (error) {
+
+            console.error(
+                "Product loading error:",
+                error
             );
+
+
+            productsContainer.innerHTML = `
+                <div class="empty-products">
+
+                    <i
+                        class="fa-solid fa-triangle-exclamation"
+                        style="font-size:40px;margin-bottom:15px;">
+                    </i>
+
+                    <p>
+                        Could not load products.
+                    </p>
+
+                    <small>
+                        ${escapeHtml(
+                            error.message
+                        )}
+                    </small>
+
+                </div>
+            `;
+
+        }
+
+    }
+
+
+    // ==========================================
+    // DISPLAY PRODUCTS
+    // ==========================================
+
+    function displayProducts(products) {
+
+        if (!productsContainer) {
+            return;
+        }
+
+
+        if (productCount) {
+
+            productCount.innerText =
+                products.length;
 
         }
 
 
-        showToast(
-            "Product removed successfully!"
-        );
+        productsContainer.innerHTML = "";
 
 
-        await loadProductsFromGoogle();
+        // ==================================
+        // NO PRODUCTS
+        // ==================================
+
+        if (products.length === 0) {
+
+            productsContainer.innerHTML = `
+                <div class="empty-products">
+
+                    <i
+                        class="fa-solid fa-box-open"
+                        style="font-size:40px;margin-bottom:15px;">
+                    </i>
+
+                    <p>
+                        No products have been added yet.
+                    </p>
+
+                </div>
+            `;
+
+            return;
+
+        }
 
 
-    } catch (error) {
+        // ==================================
+        // PRODUCTS
+        // ==================================
 
-        console.error(error);
+        products.forEach(
+            function (product) {
 
-        alert(
-            "Could not remove product.\n\n" +
-            error.message
+                const card =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                card.className =
+                    "product-card";
+
+
+                card.innerHTML = `
+
+                    <img
+                        class="product-image"
+                        src="${escapeHtml(
+                            product.image
+                        )}"
+                        alt="${escapeHtml(
+                            product.name
+                        )}"
+                        onerror="this.src='https://via.placeholder.com/400x300?text=Image+Error'"
+                    >
+
+                    <div class="product-info">
+
+                        <span class="product-category">
+                            ${escapeHtml(
+                                product.category
+                            )}
+                        </span>
+
+                        <h3>
+                            ${escapeHtml(
+                                product.name
+                            )}
+                        </h3>
+
+                        <div class="product-price">
+                            ₦${Number(
+                                product.price
+                            ).toLocaleString()}
+                        </div>
+
+                        <button
+                            class="remove-btn"
+                            data-id="${escapeHtml(
+                                String(product.id)
+                            )}"
+                        >
+
+                            <i class="fa-solid fa-trash"></i>
+
+                            Remove Product
+
+                        </button>
+
+                    </div>
+                `;
+
+
+                const removeButton =
+                    card.querySelector(
+                        ".remove-btn"
+                    );
+
+
+                removeButton.addEventListener(
+                    "click",
+                    function () {
+
+                        removeProduct(
+                            product.id
+                        );
+
+                    }
+                );
+
+
+                productsContainer.appendChild(
+                    card
+                );
+
+            }
         );
 
     }
 
-}
+
+    // ==========================================
+    // REMOVE PRODUCT
+    // ==========================================
+
+    async function removeProduct(id) {
+
+        const confirmed =
+            confirm(
+                "Are you sure you want to remove this product?"
+            );
 
 
+        if (!confirmed) {
+            return;
+        }
 
-// ==========================================
-// TOAST
-// ==========================================
 
-function showToast(message) {
+        try {
 
-    const toast =
-        document.getElementById("toast");
+            const response =
+                await fetch(
+                    GOOGLE_SCRIPT_URL,
+                    {
 
-    const toastMessage =
-        document.getElementById(
-            "toast-message"
+                        method: "POST",
+
+                        body: JSON.stringify({
+
+                            action:
+                                "removeProduct",
+
+                            id: id
+
+                        })
+
+                    }
+                );
+
+
+            const result =
+                await response.json();
+
+
+            console.log(
+                "Remove product response:",
+                result
+            );
+
+
+            if (!result.success) {
+
+                throw new Error(
+                    result.error ||
+                    "Could not remove product."
+                );
+
+            }
+
+
+            showToast(
+                "Product removed successfully!"
+            );
+
+
+            await loadProductsFromGoogle();
+
+
+        } catch (error) {
+
+            console.error(
+                "Remove product error:",
+                error
+            );
+
+
+            alert(
+                "Could not remove product.\n\n" +
+                error.message
+            );
+
+        }
+
+    }
+
+
+    // ==========================================
+    // TOAST
+    // ==========================================
+
+    function showToast(message) {
+
+        const toast =
+            document.getElementById(
+                "toast"
+            );
+
+        const toastMessage =
+            document.getElementById(
+                "toast-message"
+            );
+
+
+        if (!toast || !toastMessage) {
+
+            alert(message);
+
+            return;
+
+        }
+
+
+        toastMessage.innerText =
+            message;
+
+
+        toast.classList.add("show");
+
+
+        setTimeout(
+            function () {
+
+                toast.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
         );
 
-
-    toastMessage.innerText =
-        message;
+    }
 
 
-    toast.classList.add("show");
+    // ==========================================
+    // ESCAPE HTML
+    // ==========================================
 
+    function escapeHtml(value) {
 
-    setTimeout(function() {
+        return String(value)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
 
-        toast.classList.remove("show");
+    }
 
-    }, 2500);
-
-}
-
+});
 
 
 </script>
