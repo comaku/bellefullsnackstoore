@@ -838,215 +838,17 @@ cursor:pointer;
 <!-- ============================
      PRODUCTS
 ============================= -->
-
-<main id="products">
+<section class="products-section">
 
     <h2>Featured Products</h2>
 
-    <div class="products">
-
-        <!-- PLANTAIN -->
-        <div class="card" data-category="crunch">
-
-            <img src="ima1.jpg" alt="Plantain Chip">
-
-            <h3>Plantain Chip</h3>
-
-            <p class="price">₦250</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- PLANTAIN -->
-        <div class="card" data-category="crunch">
-
-            <img src="ima2.jpg" alt="Potato Chip">
-
-            <h3>Potato Chip</h3>
-
-            <p class="price">₦250</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- BISCUIT -->
-        <div class="card" data-category="biscuit">
-
-            <img src="iima3.jpg" alt="Cream Crackers">
-
-            <h3>Cream crackers</h3>
-
-            <p class="price">₦300</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- CRUNCH -->
-        <div class="card" data-category="crunch">
-
-            <img src="ima4.png" alt="Checkers Peanuts">
-
-            <h3>Checkers Peanuts</h3>
-
-            <p class="price">₦300</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- DRINK -->
-        <div class="card" data-category="drinks">
-
-            <img src="ima5.png" alt="Caprisunne">
-
-            <h3>Caprisunne</h3>
-
-            <p class="price">₦400</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- DRINK -->
-        <div class="card" data-category="drinks">
-
-            <img src="ima6.png" alt="Ribenna">
-
-            <h3>Ribenna</h3>
-
-            <p class="price">₦400</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- DRINK -->
-        <div class="card" data-category="drinks">
-
-            <img src="ima7.jpg" alt="Happy Hour">
-
-            <h3>Happy Hour</h3>
-
-            <p class="price">₦350</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- BISCUIT -->
-        <div class="card" data-category="biscuit">
-
-            <img src="ima8.jpg" alt="Chocokings">
-
-            <h3>Chocokings</h3>
-
-            <p class="price">₦250</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
-
-        <!-- CHEWING GUM -->
-        <div class="card" data-category="chewing-gum">
-
-            <img src="ima9.jpg" alt="Center Fresh">
-
-            <h3>Center fresh</h3>
-
-            <p class="price">₦50</p>
-
-            <div class="qty">
-                <button>-</button>
-                <span>1</span>
-                <button>+</button>
-            </div>
-
-            <button class="add-cart">
-                Add to Cart
-            </button>
-
-        </div>
-
+    <div id="products-container" class="products">
+        <!-- Products will be loaded from Google Sheets -->
     </div>
 
-</main>
+</section>
 
-
+    
 <!-- Overlay -->
 <div class="cart-overlay"></div>
 
@@ -1097,322 +899,971 @@ cursor:pointer;
 </a>
 <footer><p>&copy; 2026 Bellefull Snack Store. All rights reserved.</p></footer>
 <script>
-// ============================
+
+// ==========================================
+// BELLEFULL SNACK STORE
+// MARKET.JS
+// ==========================================
+
+
+// ==========================================
+// GOOGLE APPS SCRIPT
+// ==========================================
+
+const GOOGLE_SCRIPT_URL =
+    "https://script.google.com/macros/s/AKfycbzubs7qfioxo8PBZrTM-YatdLfzEl-0tWMUNFrC8mmTNwuqAp2OJLfgazgDmVxTTZ7D/exec";
+
+
+// ==========================================
+// ELEMENTS
+// ==========================================
+
+const productsContainer =
+    document.getElementById("products-container");
+
+const categoryButtons =
+    document.querySelectorAll(".category-btn");
+
+const searchInput =
+    document.querySelector(".search input");
+
+const cartItems =
+    document.getElementById("cart-items");
+
+const cartCount =
+    document.getElementById("cart-count");
+
+const totalDisplay =
+    document.querySelector(".cart-sidebar h3");
+
+const cartBtn =
+    document.getElementById("cart-btn");
+
+const cartSidebar =
+    document.querySelector(".cart-sidebar");
+
+const overlay =
+    document.querySelector(".cart-overlay");
+
+const closeCart =
+    document.getElementById("close-cart");
+
+
+// ==========================================
+// PRODUCTS
+// ==========================================
+
+let products = [];
+
+
+// ==========================================
+// CART
+// ==========================================
+
+let cart =
+    JSON.parse(localStorage.getItem("cart")) || [];
+
+
+// ==========================================
+// CURRENT FILTER
+// ==========================================
+
+let currentCategory = "all";
+
+
+// ==========================================
 // PRELOADER
-// ============================
+// ==========================================
 
-window.addEventListener("load", () => {
-    const preloader = document.getElementById("preloader");
+window.addEventListener("load", function () {
 
-    setTimeout(() => {
+    const preloader =
+        document.getElementById("preloader");
+
+    if (!preloader) {
+        return;
+    }
+
+    setTimeout(function () {
+
         preloader.style.opacity = "0";
         preloader.style.visibility = "hidden";
+
     }, 1200);
+
 });
 
-// ============================
-// SHOPPING CART
-// ============================
 
-let cart = [];
+// ==========================================
+// LOAD PRODUCTS
+// ==========================================
 
-const cartItems = document.getElementById("cart-items");
-const cartCount = document.getElementById("cart-count");
-const totalDisplay = document.querySelector(".cart-sidebar h3");
+async function loadProducts() {
 
-const cards = document.querySelectorAll(".card");
+    try {
 
-cards.forEach(card => {
+        productsContainer.innerHTML = `
 
-    const minusBtn = card.querySelector(".qty button:first-child");
-    const plusBtn = card.querySelector(".qty button:last-child");
-    const qtySpan = card.querySelector(".qty span");
-    const addBtn = card.querySelector(".add-cart");
+            <div class="loading-products">
 
-    let qty = 1;
+                <i class="fa-solid fa-spinner fa-spin"></i>
 
-    plusBtn.addEventListener("click", () => {
-        qty++;
-        qtySpan.innerText = qty;
-    });
+                <p>Loading products...</p>
 
-    minusBtn.addEventListener("click", () => {
+            </div>
 
-        if (qty > 1) {
-            qty--;
-            qtySpan.innerText = qty;
+        `;
+
+
+        const response =
+            await fetch(
+                GOOGLE_SCRIPT_URL +
+                "?action=getProducts"
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Could not connect to the store."
+            );
+
         }
 
-    });
 
-    addBtn.addEventListener("click", () => {
+        const result =
+            await response.json();
 
-        const name = card.querySelector("h3").innerText;
 
-        const price = parseInt(
-            card.querySelector(".price")
-                .innerText
-                .replace("₦", "")
-                .replace(",", "")
+        console.log(
+            "Google Sheets products:",
+            result
         );
 
-        const existing = cart.find(item => item.name === name);
 
-        if (existing) {
+        if (!result.success) {
 
-            existing.qty += qty;
-
-        } else {
-
-            cart.push({
-                name,
-                price,
-                qty
-            });
+            throw new Error(
+                result.error ||
+                "Could not load products."
+            );
 
         }
 
-        qty = 1;
-        qtySpan.innerText = qty;
 
-        updateCart();
+        products =
+            result.products || [];
 
-        showToast(name + " added to cart!");
 
-    });
+        displayProducts();
 
-});
 
-// ============================
-// UPDATE CART
-// ============================
+    } catch (error) {
 
-function updateCart() {
+        console.error(
+            "PRODUCT LOAD ERROR:",
+            error
+        );
 
-    cartItems.innerHTML = "";
 
-    let total = 0;
+        productsContainer.innerHTML = `
 
-    let count = 0;
+            <div class="empty-products">
 
-    if (cart.length === 0) {
+                <i
+                    class="fa-solid fa-triangle-exclamation">
+                </i>
 
-        cartItems.innerHTML = "No items yet.";
+                <h3>
+                    Could not load products
+                </h3>
 
-        cartCount.innerText = 0;
+                <p>
+                    Please try again later.
+                </p>
 
-        totalDisplay.innerText = "Total: ₦0";
+                <button
+                    type="button"
+                    onclick="loadProducts()">
+
+                    Try Again
+
+                </button>
+
+            </div>
+
+        `;
+
+    }
+
+}
+
+
+// ==========================================
+// DISPLAY PRODUCTS
+// ==========================================
+
+function displayProducts() {
+
+    const searchValue =
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+
+    const filteredProducts =
+        products.filter(function (product) {
+
+
+            // ==============================
+            // CATEGORY
+            // ==============================
+
+            const category =
+                String(
+                    product.category || ""
+                )
+                .trim()
+                .toLowerCase();
+
+
+            let categoryMatches = true;
+
+
+            if (currentCategory !== "all") {
+
+                categoryMatches =
+                    category === currentCategory;
+
+            }
+
+
+            // ==============================
+            // SEARCH
+            // ==============================
+
+            const name =
+                String(
+                    product.name || ""
+                )
+                .toLowerCase();
+
+
+            const searchMatches =
+                name.includes(searchValue);
+
+
+            return (
+                categoryMatches &&
+                searchMatches
+            );
+
+        });
+
+
+    productsContainer.innerHTML = "";
+
+
+    // ======================================
+    // NO PRODUCTS
+    // ======================================
+
+    if (filteredProducts.length === 0) {
+
+        productsContainer.innerHTML = `
+
+            <div class="empty-products">
+
+                <i
+                    class="fa-solid fa-box-open">
+                </i>
+
+                <h3>
+                    No products found
+                </h3>
+
+                <p>
+                    Try another search or category.
+                </p>
+
+            </div>
+
+        `;
 
         return;
 
     }
 
-    cart.forEach((item,index)=>{
 
-        total += item.price * item.qty;
+    // ======================================
+    // CREATE PRODUCT CARDS
+    // ======================================
 
-        count += item.qty;
+    filteredProducts.forEach(function (product) {
 
-        const div = document.createElement("div");
+        const card =
+            document.createElement("div");
 
-        div.style.marginBottom = "15px";
 
-        div.className = "cart-product";
+        card.className = "card";
 
-div.innerHTML = `
-<div>
 
-<h4>${item.name}</h4>
+        card.dataset.category =
+            String(
+                product.category || ""
+            )
+            .trim()
+            .toLowerCase();
 
-<p>Qty: ${item.qty}</p>
 
-<strong>₦${(item.price * item.qty).toLocaleString()}</strong>
+        const price =
+            Number(product.price) || 0;
 
-</div>
 
-<button class="remove-btn" onclick="removeItem(${index})">
+        card.innerHTML = `
 
-<i class="fa-solid fa-trash"></i>
+            <img
+                src="${escapeHTML(product.image)}"
+                alt="${escapeHTML(product.name)}"
+                class="product-image"
+            >
 
-</button>
-`;
 
-        cartItems.appendChild(div);
+            <div class="product-info">
+
+                <span class="product-category">
+
+                    ${escapeHTML(product.category)}
+
+                </span>
+
+
+                <h3>
+                    ${escapeHTML(product.name)}
+                </h3>
+
+
+                <p class="price">
+
+                    ₦${price.toLocaleString()}
+
+                </p>
+
+
+                <div class="qty">
+
+                    <button
+                        type="button"
+                        class="qty-minus">
+
+                        −
+
+                    </button>
+
+
+                    <span class="qty-value">
+                        1
+                    </span>
+
+
+                    <button
+                        type="button"
+                        class="qty-plus">
+
+                        +
+
+                    </button>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="add-cart">
+
+                    <i class="fa-solid fa-cart-plus"></i>
+
+                    Add to Cart
+
+                </button>
+
+            </div>
+
+        `;
+
+
+        productsContainer.appendChild(card);
+
+
+        // ==================================
+        // QUANTITY
+        // ==================================
+
+        const minusBtn =
+            card.querySelector(".qty-minus");
+
+        const plusBtn =
+            card.querySelector(".qty-plus");
+
+        const qtySpan =
+            card.querySelector(".qty-value");
+
+        const addBtn =
+            card.querySelector(".add-cart");
+
+
+        let quantity = 1;
+
+
+        plusBtn.addEventListener(
+            "click",
+            function () {
+
+                quantity++;
+
+                qtySpan.innerText =
+                    quantity;
+
+            }
+        );
+
+
+        minusBtn.addEventListener(
+            "click",
+            function () {
+
+                if (quantity > 1) {
+
+                    quantity--;
+
+                    qtySpan.innerText =
+                        quantity;
+
+                }
+
+            }
+        );
+
+
+        // ==================================
+        // ADD TO CART
+        // ==================================
+
+        addBtn.addEventListener(
+            "click",
+            function () {
+
+                addToCart(
+                    product,
+                    quantity
+                );
+
+
+                quantity = 1;
+
+                qtySpan.innerText = "1";
+
+            }
+        );
 
     });
 
-    cartCount.innerText = count;
-
-    totalDisplay.innerText = "Total: ₦" + total.toLocaleString();
-
-    localStorage.setItem("cart", JSON.stringify(cart));
-
 }
 
-// ============================
-// REMOVE ITEM
-// ============================
 
-function removeItem(index){
+// ==========================================
+// ADD TO CART
+// ==========================================
 
-    cart.splice(index,1);
+function addToCart(product, quantity) {
 
-    updateCart();
+    const productId =
+        String(product.id);
 
-}
 
-// ============================
-// LOAD CART
-// ============================
+    const existing =
+        cart.find(function (item) {
 
-window.addEventListener("DOMContentLoaded",()=>{
+            return String(item.id) === productId;
 
-    const saved = localStorage.getItem("cart");
+        });
 
-    if(saved){
 
-        cart = JSON.parse(saved);
+    if (existing) {
 
-        updateCart();
+        existing.qty += quantity;
+
+    } else {
+
+        cart.push({
+
+            id: product.id,
+
+            name: product.name,
+
+            image: product.image,
+
+            category: product.category,
+
+            price: Number(product.price) || 0,
+
+            qty: quantity
+
+        });
 
     }
 
-});
 
-// ============================
-// SEARCH
-// ============================
+    saveCart();
 
-const searchInput = document.querySelector(".search input");
-
-searchInput.addEventListener("keyup",()=>{
-
-    const value = searchInput.value.toLowerCase();
-
-    cards.forEach(card=>{
-
-        const name = card.querySelector("h3")
-        .innerText
-        .toLowerCase();
-
-        if(name.includes(value)){
-
-            card.style.display="block";
-
-        }else{
-
-            card.style.display="none";
-
-        }
-
-    });
-
-});
+    updateCart();
 
 
-// ============================
-// CATEGORY FILTER
-// ============================
-
-const categoryBtns = document.querySelectorAll(".category-btn");
-
-categoryBtns.forEach(button => {
-
-    button.addEventListener("click", () => {
-
-        const selectedCategory =
-            button.dataset.category;
-
-        // Remove active state
-        categoryBtns.forEach(btn => {
-            btn.classList.remove("active");
-        });
-
-        // Add active state
-        button.classList.add("active");
-
-        // Filter products
-        cards.forEach(card => {
-
-            const productCategory =
-                card.dataset.category;
-
-            if (
-                selectedCategory === "all" ||
-                productCategory === selectedCategory
-            ) {
-
-                card.style.display = "";
-
-            } else {
-
-                card.style.display = "none";
-
-            }
-
-        });
-
-    });
-
-});
-
-
-
-// ============================
-// TOAST MESSAGE
-// ============================
-
-function showToast(message){
-
-const toast=document.createElement("div");
-
-toast.innerText=message;
-
-toast.style.position="fixed";
-toast.style.bottom="30px";
-toast.style.left="50%";
-toast.style.transform="translateX(-50%)";
-toast.style.background="#28a745";
-toast.style.color="white";
-toast.style.padding="15px 25px";
-toast.style.borderRadius="50px";
-toast.style.zIndex="9999";
-toast.style.boxShadow="0 10px 20px rgba(0,0,0,.2)";
-
-document.body.appendChild(toast);
-
-setTimeout(()=>{
-
-toast.remove();
-
-},2500);
+    showToast(
+        product.name +
+        " added to cart!"
+    );
 
 }
 
-// ============================
-// OPEN / CLOSE CART
-// ============================
 
-const cartBtn = document.getElementById("cart-btn");
-const cartSidebar = document.querySelector(".cart-sidebar");
-const overlay = document.querySelector(".cart-overlay");
-const closeCart = document.getElementById("close-cart");
+// ==========================================
+// SAVE CART
+// ==========================================
 
-cartBtn.addEventListener("click", () => {
-    cartSidebar.classList.add("active");
-    overlay.classList.add("active");
+function saveCart() {
+
+    localStorage.setItem(
+        "cart",
+        JSON.stringify(cart)
+    );
+
+}
+
+
+// ==========================================
+// UPDATE CART
+// ==========================================
+
+function updateCart() {
+
+    if (!cartItems) {
+        return;
+    }
+
+
+    cartItems.innerHTML = "";
+
+
+    let total = 0;
+
+    let count = 0;
+
+
+    // ======================================
+    // EMPTY CART
+    // ======================================
+
+    if (cart.length === 0) {
+
+        cartItems.innerHTML =
+            "No items yet.";
+
+
+        if (cartCount) {
+
+            cartCount.innerText = "0";
+
+        }
+
+
+        if (totalDisplay) {
+
+            totalDisplay.innerText =
+                "Total: ₦0";
+
+        }
+
+
+        saveCart();
+
+        return;
+
+    }
+
+
+    // ======================================
+    // CART ITEMS
+    // ======================================
+
+    cart.forEach(function (item, index) {
+
+        const price =
+            Number(item.price) || 0;
+
+        const qty =
+            Number(item.qty) || 0;
+
+        const subtotal =
+            price * qty;
+
+
+        total += subtotal;
+
+        count += qty;
+
+
+        const div =
+            document.createElement("div");
+
+
+        div.className =
+            "cart-product";
+
+
+        div.innerHTML = `
+
+            <div>
+
+                <strong>
+                    ${escapeHTML(item.name)}
+                </strong>
+
+                <br>
+
+                <small>
+                    ₦${price.toLocaleString()}
+                    ×
+                    ${qty}
+                </small>
+
+                <br>
+
+                <strong>
+                    ₦${subtotal.toLocaleString()}
+                </strong>
+
+            </div>
+
+
+            <button
+                type="button"
+                class="remove-btn"
+                data-index="${index}">
+
+                <i class="fa-solid fa-trash"></i>
+
+            </button>
+
+        `;
+
+
+        cartItems.appendChild(div);
+
+
+        const removeBtn =
+            div.querySelector(".remove-btn");
+
+
+        removeBtn.addEventListener(
+            "click",
+            function () {
+
+                removeItem(index);
+
+            }
+        );
+
+    });
+
+
+    // ======================================
+    // UPDATE CART COUNT
+    // ======================================
+
+    if (cartCount) {
+
+        cartCount.innerText =
+            count;
+
+    }
+
+
+    // ======================================
+    // UPDATE TOTAL
+    // ======================================
+
+    if (totalDisplay) {
+
+        totalDisplay.innerText =
+            "Total: ₦" +
+            total.toLocaleString();
+
+    }
+
+
+    saveCart();
+
+}
+
+
+// ==========================================
+// REMOVE ITEM
+// ==========================================
+
+function removeItem(index) {
+
+    cart.splice(index, 1);
+
+    updateCart();
+
+
+    showToast(
+        "Product removed from cart."
+    );
+
+}
+
+
+// ==========================================
+// SEARCH
+// ==========================================
+
+if (searchInput) {
+
+    searchInput.addEventListener(
+        "input",
+        function () {
+
+            displayProducts();
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CATEGORY FILTER
+// ==========================================
+
+categoryButtons.forEach(function (button) {
+
+    button.addEventListener(
+        "click",
+        function () {
+
+
+            // ==============================
+            // GET CATEGORY
+            // ==============================
+
+            currentCategory =
+                button.dataset.category
+                    .trim()
+                    .toLowerCase();
+
+
+            // ==============================
+            // ACTIVE BUTTON
+            // ==============================
+
+            categoryButtons.forEach(
+                function (btn) {
+
+                    btn.classList.remove(
+                        "active"
+                    );
+
+                }
+            );
+
+
+            button.classList.add(
+                "active"
+            );
+
+
+            // ==============================
+            // DISPLAY PRODUCTS
+            // ==============================
+
+            displayProducts();
+
+        }
+    );
+
 });
 
-closeCart.addEventListener("click", () => {
-    cartSidebar.classList.remove("active");
-    overlay.classList.remove("active");
-});
 
-overlay.addEventListener("click", () => {
-    cartSidebar.classList.remove("active");
-    overlay.classList.remove("active");
-});
+// ==========================================
+// OPEN CART
+// ==========================================
 
+if (cartBtn) {
+
+    cartBtn.addEventListener(
+        "click",
+        function () {
+
+            cartSidebar.classList.add(
+                "active"
+            );
+
+            overlay.classList.add(
+                "active"
+            );
+
+        }
+    );
+
+}
+
+
+// ==========================================
+// CLOSE CART
+// ==========================================
+
+function closeCartSidebar() {
+
+    cartSidebar.classList.remove(
+        "active"
+    );
+
+    overlay.classList.remove(
+        "active"
+    );
+
+}
+
+
+if (closeCart) {
+
+    closeCart.addEventListener(
+        "click",
+        closeCartSidebar
+    );
+
+}
+
+
+if (overlay) {
+
+    overlay.addEventListener(
+        "click",
+        closeCartSidebar
+    );
+
+}
+
+
+// ==========================================
+// TOAST
+// ==========================================
+
+function showToast(message) {
+
+    const toast =
+        document.createElement("div");
+
+
+    toast.innerText =
+        message;
+
+
+    toast.style.position =
+        "fixed";
+
+    toast.style.bottom =
+        "30px";
+
+    toast.style.left =
+        "50%";
+
+    toast.style.transform =
+        "translateX(-50%)";
+
+    toast.style.background =
+        "#28a745";
+
+    toast.style.color =
+        "#fff";
+
+    toast.style.padding =
+        "15px 25px";
+
+    toast.style.borderRadius =
+        "50px";
+
+    toast.style.zIndex =
+        "999999";
+
+    toast.style.boxShadow =
+        "0 10px 20px rgba(0,0,0,.2)";
+
+
+    document.body.appendChild(
+        toast
+    );
+
+
+    setTimeout(
+        function () {
+
+            toast.remove();
+
+        },
+        2500
+    );
+
+}
+
+
+// ==========================================
+// ESCAPE HTML
+// ==========================================
+
+function escapeHTML(value) {
+
+    return String(value)
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+
+}
+
+
+// ==========================================
+// START STORE
+// ==========================================
+
+updateCart();
+
+loadProducts();   
 
 </script>
 
