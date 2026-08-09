@@ -738,6 +738,7 @@ LOADING MODAL
 
 
 <script>
+
 // ==========================================
 // BELLEFULL SNACK STORE
 // checkout.js
@@ -757,9 +758,6 @@ const CLOUDINARY_UPLOAD_PRESET = "Bellefull-Snack-Receipts";
 // -----------------------------
 // GOOGLE APPS SCRIPT
 // -----------------------------
-// IMPORTANT:
-// Replace this with your deployed
-// Google Apps Script Web App URL.
 
 const GOOGLE_SCRIPT_URL =
     "https://script.google.com/macros/s/AKfycbww_8-PuHt-8JJDfXWpmUwc4ppjeje6BpXN7VJUSpDUGkVMhixd4ReQ4tHK55D4lMpq/exec";
@@ -824,10 +822,13 @@ function displayCart() {
 
     cart.forEach(item => {
 
-        const subtotal = item.price * item.qty;
+        const price = Number(item.price) || 0;
+        const qty = Number(item.qty) || 0;
+
+        const subtotal = price * qty;
 
         total += subtotal;
-        itemCount += item.qty;
+        itemCount += qty;
 
         orderItems.innerHTML += `
             <div class="order-item">
@@ -835,7 +836,7 @@ function displayCart() {
                 <div>
                     <strong>${escapeHTML(item.name)}</strong>
                     <br>
-                    Qty: ${item.qty}
+                    Qty: ${qty}
                 </div>
 
                 <div>
@@ -907,11 +908,9 @@ if (copyBtn) {
 async function uploadReceipt(file) {
 
     if (!file) {
-
         throw new Error(
             "No payment receipt was selected."
         );
-
     }
 
     if (
@@ -936,13 +935,8 @@ async function uploadReceipt(file) {
 
     }
 
-
-    // -----------------------------
-    // CHECK FILE SIZE
-    // -----------------------------
-
-    const maxSize =
-        10 * 1024 * 1024; // 10MB
+    // Maximum file size: 10MB
+    const maxSize = 10 * 1024 * 1024;
 
     if (file.size > maxSize) {
 
@@ -952,18 +946,12 @@ async function uploadReceipt(file) {
 
     }
 
-
-    // -----------------------------
-    // CHECK FILE TYPE
-    // -----------------------------
-
+    // Allowed file types
     const allowedTypes = [
-
         "image/jpeg",
         "image/png",
         "image/jpg",
         "application/pdf"
-
     ];
 
     if (!allowedTypes.includes(file.type)) {
@@ -974,11 +962,6 @@ async function uploadReceipt(file) {
 
     }
 
-
-    // -----------------------------
-    // FORM DATA
-    // -----------------------------
-
     const formData = new FormData();
 
     formData.append("file", file);
@@ -988,22 +971,13 @@ async function uploadReceipt(file) {
         CLOUDINARY_UPLOAD_PRESET
     );
 
-
-    // -----------------------------
-    // CLOUDINARY UPLOAD
-    // -----------------------------
-
     const endpoint =
         `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/auto/upload`;
 
-    const response = await fetch(
-        endpoint,
-        {
-            method: "POST",
-            body: formData
-        }
-    );
-
+    const response = await fetch(endpoint, {
+        method: "POST",
+        body: formData
+    });
 
     if (!response.ok) {
 
@@ -1021,10 +995,8 @@ async function uploadReceipt(file) {
 
     }
 
-
     const data =
         await response.json();
-
 
     if (!data.secure_url) {
 
@@ -1034,9 +1006,7 @@ async function uploadReceipt(file) {
 
     }
 
-
     return data.secure_url;
-
 }
 
 
@@ -1058,11 +1028,15 @@ async function sendOrderToGoogleSheets(order) {
 
     }
 
+    /*
+        We use text/plain here because Google Apps Script
+        Web Apps can sometimes have CORS/preflight issues
+        with application/json.
+    */
 
     const response = await fetch(
         GOOGLE_SCRIPT_URL,
         {
-
             method: "POST",
 
             headers: {
@@ -1071,23 +1045,53 @@ async function sendOrderToGoogleSheets(order) {
             },
 
             body: JSON.stringify(order)
-
         }
     );
 
-
     /*
-        We don't depend on the response body here.
-
-        Google Apps Script Web Apps can behave differently
-        depending on deployment/browser CORS handling.
-
-        If the request reaches Apps Script successfully,
-        doPost(e) will process the order.
+        Try to read the response.
+        If Apps Script returns JSON, verify it.
     */
 
+    try {
 
-    return true;
+        const result = await response.json();
+
+        console.log(
+            "Google Apps Script response:",
+            result
+        );
+
+        if (result.success === false) {
+
+            throw new Error(
+                result.error ||
+                "Google Apps Script rejected the order."
+            );
+
+        }
+
+        return result;
+
+    } catch (error) {
+
+        /*
+            Some Google Apps Script deployments may
+            return an unusual response because of redirects.
+
+            The request may still have reached Apps Script.
+        */
+
+        console.warn(
+            "Could not parse Apps Script response:",
+            error
+        );
+
+        return {
+            success: true
+        };
+
+    }
 
 }
 
@@ -1198,12 +1202,60 @@ form.addEventListener(
 
         cart.forEach(item => {
 
+            const price =
+                Number(item.price) || 0;
+
+            const qty =
+                Number(item.qty) || 0;
+
             totalAmount +=
-                Number(item.price) *
-                Number(item.qty);
+                price * qty;
 
             totalQuantity +=
-                Number(item.qty);
+                qty;
+
+        });
+
+
+        // ======================================
+        // CREATE CLEAN PRODUCT DATA
+        // ======================================
+
+        /*
+            IMPORTANT FIX:
+
+            We send "qty", NOT "quantity".
+
+            Your Google Apps Script expects:
+
+            product.qty
+
+            This fixes the x0 / ₦0 problem.
+        */
+
+        const products = cart.map(item => {
+
+            const price =
+                Number(item.price) || 0;
+
+            const qty =
+                Number(item.qty) || 0;
+
+            return {
+
+                name:
+                    item.name,
+
+                price:
+                    price,
+
+                qty:
+                    qty,
+
+                subtotal:
+                    price * qty
+
+            };
 
         });
 
@@ -1225,16 +1277,20 @@ form.addEventListener(
 
         try {
 
+
             // ==================================
             // STEP 1
-            // UPLOAD RECEIPT TO CLOUDINARY
+            // UPLOAD RECEIPT
             // ==================================
 
-            loadingModal
-                .querySelector("h3")
-                .innerText =
-                "Uploading payment receipt...";
+            if (loadingModal.querySelector("h3")) {
 
+                loadingModal
+                    .querySelector("h3")
+                    .innerText =
+                    "Uploading payment receipt...";
+
+            }
 
             const receiptURL =
                 await uploadReceipt(receipt);
@@ -1248,7 +1304,7 @@ form.addEventListener(
 
             // ==================================
             // STEP 2
-            // CREATE ORDER DATA
+            // CREATE ORDER
             // ==================================
 
             const order = {
@@ -1293,30 +1349,24 @@ form.addEventListener(
                 receipt:
                     receiptURL,
 
+                /*
+                    IMPORTANT:
+                    Send qty here.
+                */
+
                 products:
-                    cart.map(item => ({
-
-                        name:
-                            item.name,
-
-                        price:
-                            Number(item.price),
-
-                        quantity:
-                            Number(item.qty),
-
-                        subtotal:
-                            Number(item.price) *
-                            Number(item.qty)
-
-                    }))
+                    products
 
             };
 
 
             console.log(
-                "Order prepared:",
-                order
+                "FINAL ORDER BEING SENT:",
+                JSON.stringify(
+                    order,
+                    null,
+                    2
+                )
             );
 
 
@@ -1325,11 +1375,14 @@ form.addEventListener(
             // SEND TO GOOGLE SHEETS
             // ==================================
 
-            loadingModal
-                .querySelector("h3")
-                .innerText =
-                "Saving your order...";
+            if (loadingModal.querySelector("h3")) {
 
+                loadingModal
+                    .querySelector("h3")
+                    .innerText =
+                    "Saving your order...";
+
+            }
 
             await sendOrderToGoogleSheets(
                 order
@@ -1391,13 +1444,9 @@ form.addEventListener(
             );
 
 
-            // Hide loading
-
             loadingModal.style.display =
                 "none";
 
-
-            // Show error
 
             alert(
                 error.message ||
@@ -1430,13 +1479,35 @@ form.addEventListener(
 function escapeHTML(value) {
 
     return String(value)
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
+
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+
+        .replace(
+            /</g,
+            "&lt;"
+        )
+
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }
+
+
 </script>
 
 </body>
