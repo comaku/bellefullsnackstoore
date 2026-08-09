@@ -763,6 +763,19 @@ cursor:pointer;
 
 }
 
+
+.categories button.active{
+    background:#ff9800;
+    color:white;
+}
+
+.categories button:hover{
+    background:#ff9800;
+    color:white;
+}
+
+   
+
 </style>
 </head>
 <body>
@@ -788,67 +801,252 @@ cursor:pointer;
 <p>Order your favourite snacks at affordable prices.</p>
 <a href="#products">Shop Now</a>
 </section>
+
+<!-- ============================
+     CATEGORIES
+============================= -->
+
 <section class="categories">
-<button>All</button><button>Cripsy crunch</button><button>Biscuit</button><button>Plantain Chips</button><button>Chewing gum</button><button>Drinks</button>
+
+    <button type="button" class="category-btn active" data-category="all">
+        All
+    </button>
+
+    <button type="button" class="category-btn" data-category="crunch">
+        Cripsy Crunch
+    </button>
+
+    <button type="button" class="category-btn" data-category="biscuit">
+        Biscuit
+    </button>
+
+    <button type="button" class="category-btn" data-category="plantain">
+        Plantain Chips
+    </button>
+
+    <button type="button" class="category-btn" data-category="chewing-gum">
+        Chewing Gum
+    </button>
+
+    <button type="button" class="category-btn" data-category="drinks">
+        Drinks
+    </button>
+
 </section>
+
+
+<!-- ============================
+     PRODUCTS
+============================= -->
+
 <main id="products">
-<h2>Featured Products</h2>
-<div class="products">
-<div class="card">
-<img src="ima1.jpg" alt="Cripsy crunch">
-<h3>Plantain Chip</h3><p class="price">₦250</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="ima2.jpg" alt="Cripsy crunch">
-<h3>Potato Chip</h3><p class="price">₦250</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="iima3.jpg" alt="Biscuit">
-<h3>Cream crackers</h3><p class="price">₦300</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="ima4.png" alt="Cripsy crunch">
-<h3>Checkers Peanuts</h3><p class="price">₦300</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="ima5.png" alt="Drinks">
-<h3>Caprisunne</h3><p class="price">₦400</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="ima6.png" alt="Drinks">
-<h3>Ribenna</h3><p class="price">₦400</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="ima7.jpg" alt="Drinks">
-<h3>Happy Hour</h3><p class="price">₦350</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="ima8.jpg" alt="Biscuit">
-<h3>Chocokings</h3><p class="price">₦250</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>
-<div class="card">
-<img src="ima9.jpg" alt="Chewing gum">
-<h3>Center fresh</h3><p class="price">₦50</p>
-<div class="qty"><button>-</button><span>1</span><button>+</button></div>
-<button class="add-cart">Add to Cart</button>
-</div>   
-</div></main>
+
+    <h2>Featured Products</h2>
+
+    <div class="products">
+
+        <!-- PLANTAIN -->
+        <div class="card" data-category="plantain">
+
+            <img src="ima1.jpg" alt="Plantain Chip">
+
+            <h3>Plantain Chip</h3>
+
+            <p class="price">₦250</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- PLANTAIN -->
+        <div class="card" data-category="plantain">
+
+            <img src="ima2.jpg" alt="Potato Chip">
+
+            <h3>Potato Chip</h3>
+
+            <p class="price">₦250</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- BISCUIT -->
+        <div class="card" data-category="biscuit">
+
+            <img src="iima3.jpg" alt="Cream Crackers">
+
+            <h3>Cream crackers</h3>
+
+            <p class="price">₦300</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- CRUNCH -->
+        <div class="card" data-category="crunch">
+
+            <img src="ima4.png" alt="Checkers Peanuts">
+
+            <h3>Checkers Peanuts</h3>
+
+            <p class="price">₦300</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- DRINK -->
+        <div class="card" data-category="drinks">
+
+            <img src="ima5.png" alt="Caprisunne">
+
+            <h3>Caprisunne</h3>
+
+            <p class="price">₦400</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- DRINK -->
+        <div class="card" data-category="drinks">
+
+            <img src="ima6.png" alt="Ribenna">
+
+            <h3>Ribenna</h3>
+
+            <p class="price">₦400</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- DRINK -->
+        <div class="card" data-category="drinks">
+
+            <img src="ima7.jpg" alt="Happy Hour">
+
+            <h3>Happy Hour</h3>
+
+            <p class="price">₦350</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- BISCUIT -->
+        <div class="card" data-category="biscuit">
+
+            <img src="ima8.jpg" alt="Chocokings">
+
+            <h3>Chocokings</h3>
+
+            <p class="price">₦250</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+
+        <!-- CHEWING GUM -->
+        <div class="card" data-category="chewing-gum">
+
+            <img src="ima9.jpg" alt="Center Fresh">
+
+            <h3>Center fresh</h3>
+
+            <p class="price">₦50</p>
+
+            <div class="qty">
+                <button>-</button>
+                <span>1</span>
+                <button>+</button>
+            </div>
+
+            <button class="add-cart">
+                Add to Cart
+            </button>
+
+        </div>
+
+    </div>
+
+</main>
+
+
 <!-- Overlay -->
 <div class="cart-overlay"></div>
 
@@ -1111,45 +1309,54 @@ searchInput.addEventListener("keyup",()=>{
 
 });
 
+
 // ============================
 // CATEGORY FILTER
 // ============================
 
-const categoryBtns=document.querySelectorAll(".categories button");
+const categoryBtns = document.querySelectorAll(".category-btn");
 
-categoryBtns.forEach(btn=>{
+categoryBtns.forEach(button => {
 
-btn.addEventListener("click",()=>{
+    button.addEventListener("click", () => {
 
-const category=btn.innerText.toLowerCase();
+        const selectedCategory =
+            button.dataset.category;
 
-cards.forEach(card=>{
+        // Remove active state
+        categoryBtns.forEach(btn => {
+            btn.classList.remove("active");
+        });
 
-const name=card.querySelector("h3")
-.innerText
-.toLowerCase();
+        // Add active state
+        button.classList.add("active");
 
-if(category==="all"){
+        // Filter products
+        cards.forEach(card => {
 
-card.style.display="block";
+            const productCategory =
+                card.dataset.category;
 
-}
-else if(name.includes(category)){
+            if (
+                selectedCategory === "all" ||
+                productCategory === selectedCategory
+            ) {
 
-card.style.display="block";
+                card.style.display = "";
 
-}
-else{
+            } else {
 
-card.style.display="none";
+                card.style.display = "none";
 
-}
+            }
+
+        });
+
+    });
 
 });
 
-});
 
-});
 
 // ============================
 // TOAST MESSAGE
